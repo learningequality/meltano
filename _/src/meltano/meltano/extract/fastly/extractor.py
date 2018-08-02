@@ -73,6 +73,7 @@ class FastlyExtractor(MeltanoExtractor):
                 raise resp.status
             return json_normalize(await resp.json())
 
+
     # TODO: refactor this out in a discovery component
     async def entities(self):
         """
@@ -82,6 +83,7 @@ class FastlyExtractor(MeltanoExtractor):
             billing = await self.req(session, endpoint="billing/v2/year/2018/month/06")
             yield self.df_to_entity("Billing", billing)
 
+    # TODO: refactor this out in a discovery component
     def discover_entities(self):
         async def drain(generator):
             results = []
