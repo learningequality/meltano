@@ -11,19 +11,16 @@ from meltano.extract.base import MeltanoExtractor
 
 
 def sample_data(i, columns):
-  d = {
-    column: range(50000) for column in columns
-  }
+    d = {column: range(50000) for column in columns}
 
-  # gather the source data in the DataFrame
-  df = pd.DataFrame(data=d)
-  return df
+    # gather the source data in the DataFrame
+    df = pd.DataFrame(data=d)
+    return df
 
 
 class SampleExtractor(MeltanoExtractor):
     async def entities(self):
         yield Entity('Sample')
-
 
     async def extract(self, entity):
         for i in count():

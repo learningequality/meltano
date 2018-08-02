@@ -1,4 +1,5 @@
 import click
+from Extract.fastly.extractor import FastlyExtractor
 
 
 @click.group()
@@ -9,8 +10,10 @@ def cli():
 
 @click.command()
 def extract():
-    click.echo('Extracting..')
-
+    click.echo('Extracting ...')
+    fastly = FastlyExtractor()
+    res = fastly.extract()
+    print(res)
 
 
 cli.add_command(extract)
