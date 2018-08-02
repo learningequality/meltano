@@ -58,7 +58,7 @@ class MeltanoService:
                                                             entity=e.alias)
 
         return [cls.register_entity(build_id(entity), entity) \
-                for entity in manifest.entities]
+                for entity in manifest.get_entities]
 
 
     def get_entity(self, entity_id):

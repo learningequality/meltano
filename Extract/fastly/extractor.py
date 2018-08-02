@@ -40,29 +40,20 @@ class FastlyExtractor:
     """
     Extractor for the Fastly Billing API
     """
-
-    # async def entities(self):
-    #     """
-    #     Generates a list of Entity object for entity extract loop to consume
-    #     """
-    #     async with create_aiohttp_session() as session:
-    #         billing = await fetch(endpoint="billing/v2/year/2018/month/06", session=session)
-    #         yield self.df_to_entity("Billing", billing)
-    async def entities(self):
+    async def get_entities(self):
+        entities = []
         async with create_aiohttp_session() as session:
             for year, month in itertools.product(range(2017, 2018), range(1, 12)):
                 billing_endpoint = f'billing/v2/year/{year:04}/month/{month:02}'
-                try:
-                    print(await fetch(endpoint=billing_endpoint, session=session))
-                except Exception as err:
-                    print(err)
+                entity = asyncio.ensure_future(fetch(endpoint=billing_endpoint, session=session))
+                entities.append(entity)
 
     def extract(self):
         loop = asyncio.get_event_loop()
-        entities = loop.run_until_complete(
-            self.entities()
+        results = loop.run_until_complete(
+            self.get_entities()
         )
-        return entities
+        return results
 
     def load(self):
         pass

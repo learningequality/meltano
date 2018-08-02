@@ -25,7 +25,7 @@ def test_reader():
     manifest = reader.loads(SAMPLE)
 
     assert(manifest.version == "1.0")
-    assert(len(manifest.entities) == 1)
+    assert(len(manifest.get_entities) == 1)
 
 
 def test_writer():
@@ -37,5 +37,5 @@ def test_writer():
     round_trip = ManifestReader("sample").loads(buf.getvalue())
 
     assert(manifest.version == round_trip.version)
-    for a, b in zip(manifest.entities, round_trip.entities):
+    for a, b in zip(manifest.get_entities, round_trip.get_entities):
         assert(a.alias == b.alias)
