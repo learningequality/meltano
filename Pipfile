@@ -8,8 +8,10 @@ click = "*"
 aiohttp = "*"
 pandas = "*"
 certifi = "*"
+python-dateutil = "*"
 
 [dev-packages]
+bpython = "*"
 
 [requires]
 python_version = "3.6"
