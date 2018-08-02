@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 from dateutil.relativedelta import relativedelta
-from Extract.common.utils import create_aiohttp_session, fetch
+from common.utils import create_aiohttp_session, fetch
 
 FASTLY_API_SERVER = "https://api.fastly.com/"
 

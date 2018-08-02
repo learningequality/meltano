@@ -1,14 +1,15 @@
 import os
 
 import click
-from Extract.fastly.extractor import FastlyExtractor
+
+from fastly.extractor import FastlyExtractor
 
 
 @click.group()
 def cli():
 
     click.echo("cli group")
-    print(os.environ.get('PATH'))
+    print(os.environ.get('PYTHONPATH'))
     pass
 
 
