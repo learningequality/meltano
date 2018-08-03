@@ -194,7 +194,7 @@
         "extras_cost": 100,
         "bandwidth_units": "GB"
     },
-    "line_items": [
+    "line_items":  [
         {
             "id": "0byn0p0krGg0em6w7bYpaw",
             "aria_invoice_id": "ZbGzgfGVCmz3q7vwa21wAw",

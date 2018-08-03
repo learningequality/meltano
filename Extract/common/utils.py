@@ -18,8 +18,8 @@ def create_aiohttp_session():
     return session
 
 
-async def fetch(url, session):
+async def fetch(url, session) -> aiohttp.ClientResponse:
     async with session.get(url) as response:
         if response.status != 200:
             logging.error(f'[{response.status}] {response.reason} {url}')
-        return json_normalize(await response.json())
+        return await response.json()

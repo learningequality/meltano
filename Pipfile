@@ -9,9 +9,11 @@ aiohttp = "*"
 pandas = "*"
 certifi = "*"
 python-dateutil = "*"
+sqlalchemy = "*"
+"psycopg2" = "*"
 
 [dev-packages]
 bpython = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
