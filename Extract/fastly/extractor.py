@@ -1,9 +1,14 @@
 import asyncio
 import datetime
+import os
+import grequests
 from dateutil.relativedelta import relativedelta
-from Extract.common.utils import create_aiohttp_session, fetch
 
 FASTLY_API_SERVER = "https://api.fastly.com/"
+FASTLY_HEADERS = {
+    'Fastly-Key': os.getenv("FASTLY_API_TOKEN"),
+    'Accept': "application/json"
+}
 
 
 def get_endpoint_url(endpoint) -> str:
@@ -21,28 +26,33 @@ class FastlyExtractor:
 
     def __init__(self):
         self.name = 'fastly'  # used for defining schema name
-        self.today = datetime.date.today()
+        today = datetime.date.today()
+        self.this_month = datetime.date(year=today.year, month=today.month, day=1)
         # This is historical data starts after this period
         self.start_date = datetime.date(2017, 8, 1)
 
-    async def get_entities(self):
-        fetch_entities_tasks = []
-        async with create_aiohttp_session() as session:
-            date = self.start_date
-            while date < self.today:
-                billing_endpoint = f'billing/v2/year/{date.year:04}/month/{date.month:02}'
-                billing_url = get_endpoint_url(billing_endpoint)
-                task = asyncio.create_task(
-                    fetch(url=billing_url, session=session)
-                )
-                fetch_entities_tasks.append(task)
-                date += relativedelta(months=1)
-            return await asyncio.gather(*fetch_entities_tasks)
-    async def
+    # async def get_entities(self):
+    #     fetch_entities_tasks = []
+    #     async with create_aiohttp_session() as session:
+    #         date = self.start_date
+    #         while date < self.this_month:
+    #             billing_endpoint = f'billing/v2/year/{date.year:04}/month/{date.month:02}'
+    #             billing_url = get_endpoint_url(billing_endpoint)
+    #             task = asyncio.create_task(
+    #                 fetch(url=billing_url, session=session)
+    #             )
+    #             fetch_entities_tasks.append(task)
+    #             date += relativedelta(months=1)
+    #         return await asyncio.gather(*fetch_entities_tasks)
+
+    def get_billing_urls(self):
+        date = self.start_date
+        while date < self.this_month:
+            billing_endpoint = f'billing/v2/year/{date.year:04}/month/{date.month:02}'
+            yield get_endpoint_url(billing_endpoint)
 
     def extract(self):
-        loop = asyncio.get_event_loop()
-        future = asyncio.create_task(self.get_entities())
-        results = loop.run_until_complete(future)
+        rs = (grequests.get(url, headers=FASTLY_HEADERS) for url in self.get_billing_urls())
+        results = grequests.imap(rs)
         for result in results:
-            yield result['line_items']
+            yield {'Name': "LineItems", 'data' :result.json()['line_items']}

@@ -11,6 +11,8 @@ certifi = "*"
 python-dateutil = "*"
 sqlalchemy = "*"
 "psycopg2" = "*"
+greenlet = "==0.4.13"
+grequests = "*"
 
 [dev-packages]
 bpython = "*"
