@@ -23,7 +23,9 @@ def cli():
               help="Which loader should be used in this extraction")
 def extract(extractor, loader):
     """
-    Extractor expects name of the extractor as a first argument
+    :param extractor: name of the extractor
+    :param loader: name of the loader
+    :return:
     """
     click.echo("Starting extraction ...")
     extractor_class = extractors_registry.get(extractor)
@@ -34,11 +36,11 @@ def extract(extractor, loader):
     if not loader_class:
         raise Exception(f'Loader {loader} not found please specify one of the following: {loaders_registry.keys()}')
     extractor = extractor_class()
-    extracted_dfs = extractor.extract()
+    extracted_entities = extractor.extract()
     click.echo("Got extractor results, loading them into the loader")
 
     loader = loader_class()
-    loader.load(schema_name=extractor.name, dataframes=extracted_dfs)
+    loader.load(extracted_entities)
     click.echo("Load done! Exiting")
 
 

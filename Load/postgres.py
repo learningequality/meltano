@@ -1,7 +1,7 @@
 import os
-from typing import Iterator
+from typing import Iterator, Generator, Dict
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, PrimaryKeyConstraint
 from pandas import DataFrame
 
 
@@ -15,9 +15,12 @@ class PostgresLoader:
         db_name = os.environ.get("PG_DATABASE")
         connection_string = f'postgresql://{username}:{password}@{host}:{port}/{db_name}'
         self.connection = create_engine(connection_string)
+        self.extracting_entities = ['line_items', 'regions']
 
-    def load(self, dataframes: {'itemName': str, 'data': Iterator[DataFrame]}):
-        # apply_schema()
-        # load DF to db
-        for df in dataframes:
-            df.to_sql(name=schema_name, con=self.connection, index=False)
+    def load(self, entity_data: Generator[Dict[str, DataFrame], None, None]):
+        for entity_dict in entity_data:
+            for schema_name, dataframe in entity_dict.items():
+                if not dataframe.empty:
+                    dataframe.to_sql(name=schema_name, con=self.connection, index=False, if_exists='append')
+                else:
+                    print(f'DataFrame {dataframe} is empty skipping')

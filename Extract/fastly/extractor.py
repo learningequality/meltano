@@ -1,8 +1,9 @@
-import asyncio
-import datetime
 import os
+import datetime
+
 import grequests
 from dateutil.relativedelta import relativedelta
+from pandas.io.json import json_normalize
 
 FASTLY_API_SERVER = "https://api.fastly.com/"
 FASTLY_HEADERS = {
@@ -42,7 +43,6 @@ class FastlyExtractor:
     #                 fetch(url=billing_url, session=session)
     #             )
     #             fetch_entities_tasks.append(task)
-    #             date += relativedelta(months=1)
     #         return await asyncio.gather(*fetch_entities_tasks)
 
     def get_billing_urls(self):
@@ -50,9 +50,13 @@ class FastlyExtractor:
         while date < self.this_month:
             billing_endpoint = f'billing/v2/year/{date.year:04}/month/{date.month:02}'
             yield get_endpoint_url(billing_endpoint)
+            date += relativedelta(months=1)
 
     def extract(self):
         rs = (grequests.get(url, headers=FASTLY_HEADERS) for url in self.get_billing_urls())
         results = grequests.imap(rs)
         for result in results:
-            yield {'Name': "LineItems", 'data' :result.json()['line_items']}
+            result_dict = result.json()
+            yield {'line_items': json_normalize(result_dict.get('line_items')),
+                   # 'regions': json_normalize(result_dict.get('regions')) TODO: figgure out how to normalize this part
+                   }
