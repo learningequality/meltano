@@ -57,6 +57,8 @@ class FastlyExtractor:
         results = grequests.imap(rs)
         for result in results:
             result_dict = result.json()
-            yield {'line_items': json_normalize(result_dict.get('line_items')),
-                   # 'regions': json_normalize(result_dict.get('regions')) TODO: figgure out how to normalize this part
+            yield {'line_items': json_normalize(result_dict, record_path='line_items',
+                                                meta=['customer_id', 'end_time', 'start_time', 'invoice_id']),
+                   # 'regions': json_normalize(result_dict.get('regions')) TODO: figure out how to normalize this part
+                   # https://stackoverflow.com/questions/41469430/writing-json-column-to-postgres-using-pandas-to-sql
                    }

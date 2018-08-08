@@ -1,7 +1,7 @@
 import os
-from typing import Iterator, Generator, Dict
+from typing import Generator, Dict
 
-from sqlalchemy import create_engine, PrimaryKeyConstraint
+from sqlalchemy import create_engine
 from pandas import DataFrame
 
 
@@ -23,4 +23,4 @@ class PostgresLoader:
                 if not dataframe.empty:
                     dataframe.to_sql(name=schema_name, con=self.connection, index=False, if_exists='append')
                 else:
-                    print(f'DataFrame {dataframe} is empty skipping')
+                    print(f'DataFrame {dataframe} is empty -> skipping it')
