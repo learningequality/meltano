@@ -18,6 +18,16 @@ def index():
         settings = Settings()
     return jsonify(settings.serializable())
 
+@bp.route('/connections/delete/<int:connection_id>', methods=['DELETE'])
+def delete_connection(connection_id):
+    current_settings = Settings.query.first()
+    del current_settings.settings['connections'][connection_id]
+    current_settings.settings = current_settings.settings
+    db.session.add(current_settings)
+    db.session.commit()
+    current_settings = Settings.query.first()
+    return jsonify(current_settings.serializable())
+
 
 @bp.route('/new', methods=['POST'])
 def new():

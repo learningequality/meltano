@@ -14,8 +14,9 @@
         <p v-if="!hasConnections">No Database Connections</p>
         <div class="columns is-multiline is-mobile">
           <div class="column is-half"
-                v-for="connection in settings.connections"
+                v-for="(connection, index) in settings.connections"
                 :key="connection.host">
+                connection
             <div class="card">
               <header class="card-header">
                 <p class="card-header-title">
@@ -41,6 +42,9 @@
                   </p>
                 </div>
               </div>
+              <footer class="card-footer">
+                <a @click="deleteConnection(index)" class="card-footer-item">Delete</a>
+              </footer>
             </div>
           </div>
         </div>
@@ -121,7 +125,7 @@
 </div>
 </template>
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'Settings',
@@ -153,6 +157,9 @@ export default {
   },
 
   methods: {
+    ...mapActions('settings', [
+      'deleteConnection',
+    ]),
     submitConnectionForm() {
       this.$store.dispatch('settings/saveNewConnection', {
         name: this.connectionName,

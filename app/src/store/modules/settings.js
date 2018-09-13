@@ -20,6 +20,10 @@ const actions = {
       });
   },
 
+  deleteConnection(which) {
+    settingsApi.delete_connection(which);
+  },
+
   saveNewConnection({ commit }, formData) {
     const settingsCopy = Object.assign({}, state.settings);
     settingsCopy.connections.push(formData);
