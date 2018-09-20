@@ -132,6 +132,10 @@ const actions = {
       });
   },
 
+  resetStore({ commit }) {
+    commit('setStoreReset');
+  },
+
   expandRow({ commit }) {
     commit('toggleCollapsed');
   },
@@ -308,6 +312,10 @@ const mutations = {
 
   setChartType(context, chartType) {
     state.chartType = chartType;
+  },
+
+  setStoreReset() {
+    state.sql = '';
   },
 
   setSortColumn(context, key) {
