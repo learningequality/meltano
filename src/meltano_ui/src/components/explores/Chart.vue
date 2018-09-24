@@ -2,7 +2,7 @@
   <div v-show="results.length">
     <component :is="chartType"
       :datasets="[4, 6, 5, 8, 7, 9]"
-      :labels="['a','b','c','d','e','f']"></component>
+      :labels="resultMeasures"></component>
   </div>
 </template>
 <script>
@@ -16,11 +16,15 @@ export default {
     BarChart,
   },
   mounted() {
-    console.log('BarChart', BarChart);
+    console.log('columnHeaders', this.columnHeaders);
+    console.log('resultMeasures', this.resultMeasures);
+    console.log('results', JSON.stringify(this.results));
   },
   computed: {
     ...mapState('explores', [
       'results',
+      'resultMeasures',
+      'columnHeaders',
       'chartType',
     ]),
   },
