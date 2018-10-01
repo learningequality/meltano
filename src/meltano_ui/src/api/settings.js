@@ -9,4 +9,8 @@ export default {
   save(data) {
     return axios.post(utils.buildUrl('settings', 'new'), data);
   },
+
+  delete(connectionName) {
+    return axios.delete(utils.buildUrl('settings', `delete/${connectionName}`));
+  },
 };

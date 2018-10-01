@@ -41,6 +41,11 @@
                   </p>
                 </div>
               </div>
+              <footer class="card-footer">
+                <a class="card-footer-item" @click="confirmDeleteConnection(connection)">
+                  Delete
+                </a>
+              </footer>
             </div>
           </div>
         </div>
@@ -118,16 +123,31 @@
       </section>
     </div>
   </div>
+  <confirm
+    :open=confirm
+    title="Delete Setting?"
+    content="Are you sure you want to delete this database connection?"
+    primary="Yes"
+    secondary="No"
+    @closed="modelClosed">
+  </confirm>
 </div>
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex';
+import Confirm from '../utils/Confirm';
 
 export default {
   name: 'Settings',
 
+  components: {
+    Confirm,
+  },
+
   data() {
     return {
+      connectionToDelete: null,
+      confirm: false,
       connectionName: '',
       connectionDatabase: '',
       connectionSchema: '',
@@ -153,6 +173,20 @@ export default {
   },
 
   methods: {
+
+    confirmDeleteConnection(connection) {
+      this.connectionToDelete = connection;
+      this.confirm = true;
+    },
+
+    modelClosed(status) {
+      this.confirm = false;
+      if (status) {
+        this.$store.dispatch('settings/deleteConnection',
+          this.connectionToDelete);
+      }
+    },
+
     submitConnectionForm() {
       this.$store.dispatch('settings/saveNewConnection', {
         name: this.connectionName,

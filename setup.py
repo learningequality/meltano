@@ -45,6 +45,7 @@ setuptools.setup(
         'dbt',
         'gitpython',
         'markdown',
+        'python-dotenv',
         'pandas',
         'psycopg2',
         'pypika',

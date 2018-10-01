@@ -294,7 +294,7 @@ import Chart from './Chart';
 export default {
   name: 'Explore',
   created() {
-    this.$store.dispatch('explores/resetStore')
+    this.$store.dispatch('explores/resetStore');
     this.$store.dispatch('explores/getExplore', {
       model: this.$route.params.model,
       explore: this.$route.params.explore,

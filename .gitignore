@@ -132,3 +132,5 @@ venv.bak/
 
 api/tmp/output.json
 static/tmp
+
+meltanoenv/

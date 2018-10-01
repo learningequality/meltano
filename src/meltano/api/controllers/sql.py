@@ -76,7 +76,7 @@ def get_sql(model_name, explore_name):
         except sqlalchemy.exc.DBAPIError as e:
             print(e)
             return jsonify(
-                {'error': True, 'code': e.code, 'orig': e.orig.diag.message_primary, 'statement': e.statement}), 422
+                {'error': True, e: vars(e), 'code': e.code, 'orig': e.orig.diag.message_primary, 'statement': e.statement}), 422
 
         results = [OrderedDict(row) for row in results]
         base_dict = {'sql': outgoing_sql, 'results': results, 'error': False}

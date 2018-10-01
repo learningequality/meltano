@@ -1,8 +1,10 @@
+import sys
 from flask import (
     Blueprint,
     jsonify,
     request,
 )
+from sqlalchemy.orm.attributes import flag_modified
 
 settingsBP = Blueprint('settings', __name__, url_prefix='/settings')
 
@@ -29,6 +31,22 @@ def new():
     db.session.add(current_settings)
     db.session.commit()
     return jsonify(settings)
+
+@settingsBP.route('/delete/<connection_name>', methods=['DELETE'])
+def delete(connection_name):
+    settings = Settings.query.first()
+    settings_copy = settings.settings
+
+    for i, v in enumerate(settings_copy['connections']):
+        if v['database'] == connection_name:
+          del settings_copy['connections'][i]
+          break
+
+    settings.settings = settings_copy
+    flag_modified(settings, "settings")
+    db.session.add(settings)
+    db.session.commit()
+    return jsonify(settings_copy)
 
 
 @settingsBP.route('/connections/<name>/test')

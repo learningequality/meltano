@@ -45,11 +45,6 @@ export default new Router({
       component: NewProjectForm,
     },
     {
-      path: '/repo/',
-      name: 'Repo',
-      component: Repo,
-    },
-    {
       path: '/model/',
       name: 'Repo',
       component: Repo,
