@@ -165,6 +165,22 @@ Once you have your project, you can run `meltano` against it.
 * `meltano extract [name of extractor] --to [name of loader]`: Extract data to a loader and optionally transform the data
 * `meltano transform [name of transformation] --warehouse [name of warehouse]`: 
 
+### Files
+`meltano.yml`: The configuration file for extractors and loaders to be installed. When you have a project with a populated `meltano.yml` file you can just run `meltano install` to install everything you need to run your project. You may need to also configure your database connections with `meltano add database`. 
+
+The `meltano.yml` will look something like this: 
+
+```yml
+extractors:
+- {name: first, url: 'git+https://gitlab.com/meltano/tap-first.git'}
+loaders:
+- {name: csv, url: 'git+https://gitlab.com/meltano/target-csv.git'}
+```
+
+The name key should be the name of the plugin to be installed. We prefer the URL key be a public git http(s) url. The URL can also be any valid pip install.
+
+`/.meltano`: This directory contains all installed extractors and loads in their own virtualenv for running. It also contains the database configuration yml files. 
+
 ### Milestones
 
 Meltano runs in parallel with the data team with its 2-week milestones. Meltano team runs with 1-week milestones.
