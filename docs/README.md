@@ -14,7 +14,7 @@
 
 - [VuePress](https://vuepress.vuejs.org)
 
-## Terminology (temp location)
+## Terminology
 
 ### MELTANO
 - "Meltano is the market (data science) lifecycle, just like GitLab is the product (DevOps) lifecycle."
@@ -38,10 +38,10 @@
 
 #### *M*odel
 - Define the data model empowering the *Load*, *Transform*, and *Analyze* steps.
-    - inform the *Analyze* step (dimensions - db column and measures - computed values)
+    - inform the *Analyze* step (dimensions = db column and measures = computed values)
 
 #### *A*nalyze
-- UX friendly rich and interactive data visualization tooling levageging *Model* data.
+- UX-friendly rich and interactive data visualization tooling levageging *Model* data.
     - 'dashboarding' as part of this step
 
 #### *N*otebook
@@ -52,7 +52,7 @@
 - Data lifecycle facilitator (Meltano itself?).
     - Airflow - automates and schedules (DAG), ELT jobs as pipelines with dependencies
 
-### Related (more proprietiery?) Terminology
+### Related Terminology
 
 - Tap
     - an extractor of a specific dataset
