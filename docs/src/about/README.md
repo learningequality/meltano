@@ -152,3 +152,40 @@ We want the tools to be open source so we can ship this as a product.
 ## Differences between DAG and CI
 
 We use Airflow to orchestrate Meltano jobs. Jobs can be Extract, Load, Transform etc. To see the difference between the GitLab CI and Airflow which would cover the difference between DAGs and a CI, see this [comprehensive issue](https://gitlab.com/meltano/analytics/issues/458).
+
+## Terminology
+
+### M.E.L.T.A.N.O.
+
+- **model** - Define the data model empowering the *Load*, *Transform*, and *Analyze* steps.
+    - inform the *Analyze* step (dimensions = db column and measures = computed values)
+
+- **extract** - Extract data from one or more sources where a built-in listener kicks off the *Load* step once extraction is complete.
+    - Typically an API call or DB pull > get data > spit it out in a preferred/expected format (the schema) at one record at a time vs a dump
+        - "discovery step" to determine schema
+
+- **load** - Using the *Model* definitions create a database using the *Extract*ed data.
+    - Listen for extractor dispatches and load to DB based on extractor schema
+        - incremental w/concurrency ideal for speed
+
+- **transform** - Update the database fields to encourage human-friendly use of data in *Model* step.
+    - currently using DBT for transformations
+
+- **analyze** - UX-friendly rich and interactive data visualization tooling levageging *Model* data.
+    - 'dashboarding' as part of this step
+
+- **notebook** - like Jupyter Notebooks
+    - GUI live REPL for exploration of data - useful for saving and version controlled
+
+- **orchestrate** - Data lifecycle facilitator (Meltano itself?).
+    - Airflow - automates and schedules (DAG), ELT jobs as pipelines with dependencies
+
+### Additional Terms
+
+- **tap** - an extractor of a specific dataset
+- **target** - the type of database
+- **dimensions** - db column
+- **view** - table containing dimension
+- **explore** - one or more views
+- **measure** - computed values
+- **DAG** - directed acyclic graph
