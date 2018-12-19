@@ -8,9 +8,15 @@ It does [data ops](https://en.wikipedia.org/wiki/DataOps), data engineering, ana
 
 Meltano stands for the [steps of the data science life-cycle](#data-science-lifecycle): Model, Extract, Load, Transform, Analyze, Notebook, and Orchestrate.
 
-## How to Install and Run Meltano  
+## Getting Started
 
 Check out our [guide](https://meltano.com/guide/#getting-started) to getting started with Meltano.
+
+## Documentation
+
+You can find our documentation at [https://www.meltano.com](https://www.meltano.com).
+
+For more information on the source code and running it locally, you can find them in the [docs directory on this project](https://gitlab.com/meltano/meltano/tree/master/docs).
 
 ## Contributing to Meltano
 
