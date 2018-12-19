@@ -282,3 +282,8 @@ I am responsible for retrieving and gathering data from data warehouse, organizi
 - **explore** - one or more views
 - **measure** - computed values
 - **DAG** - directed acyclic graph
+- **data warehouse vs database (OLTP vs OLAP)** -
+- **data source** -
+- **data meta metrics** -
+- **data dictionary** -
+- **star schema vs snowflake schema** -
