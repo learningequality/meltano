@@ -69,8 +69,8 @@ def index():
 
 
 @reposBP.route("/file/<id>", methods=["GET"])
-def file(id):
-    file_path = base64.b32decode(id).decode("utf-8")
+def file(unique_id):
+    file_path = base64.b32decode(unique_id).decode("utf-8")
     (filename, ext) = os.path.splitext(file_path)
     is_markdown = False
     path_to_file = os.path.abspath(os.path.join(meltano_model_path, file_path))
@@ -80,7 +80,7 @@ def file(id):
             data = markdown.markdown(data)
             is_markdown = True
         return jsonify(
-            {"file": data, "is_markdown": is_markdown, "id": id, "populated": True}
+            {"file": data, "is_markdown": is_markdown, "id": unique_id, "populated": True}
         )
 
 
