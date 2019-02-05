@@ -39,7 +39,7 @@ def index():
     onlydocs = Path(meltano_model_path).parent.glob("*.md")
     for d in onlydocs:
         file_dict = {"path": str(d), "abs": str(d), "label": str(d.name)}
-        file_dict["unique"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode(
+        file_dict["id"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode(
             "utf-8"
         )
         sortedM5oFiles["documents"]["items"].append(file_dict)
@@ -49,7 +49,7 @@ def index():
         if ext != ".m5o":
             continue
         file_dict = {"path": f, "abs": f, "label": f}
-        file_dict["unique"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode(
+        file_dict["id"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode(
             "utf-8"
         )
         filename = filename.lower()
@@ -68,9 +68,9 @@ def index():
     return jsonify(sortedM5oFiles)
 
 
-@reposBP.route("/file/<unique>", methods=["GET"])
-def file(unique):
-    file_path = base64.b32decode(unique).decode("utf-8")
+@reposBP.route("/file/<id>", methods=["GET"])
+def file(id):
+    file_path = base64.b32decode(id).decode("utf-8")
     (filename, ext) = os.path.splitext(file_path)
     is_markdown = False
     path_to_file = os.path.abspath(os.path.join(meltano_model_path, file_path))
@@ -80,12 +80,7 @@ def file(unique):
             data = markdown.markdown(data)
             is_markdown = True
         return jsonify(
-            {
-                "file": data,
-                "is_markdown": is_markdown,
-                "unique": unique,
-                "populated": True,
-            }
+            {"file": data, "is_markdown": is_markdown, "id": id, "populated": True}
         )
 
 

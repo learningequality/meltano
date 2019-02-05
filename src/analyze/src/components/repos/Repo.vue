@@ -70,7 +70,7 @@
                       </a>
                     </div>
                     <div v-if='isDeepRoutable(key)' class='column is-one-fifth'>
-                      <router-link :to="getDeepRoute(file)"
+                      <router-link :to="getDeepRoute(key, file)"
                                     class="button is-secondary is-light is-pulled-right">
                         <span class="icon is-small">
                           <i class="fas fa-bold">*</i>
@@ -110,6 +110,7 @@
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex';
+import capitalize from '@/filters/capitalize';
 import pretty from '@/filters/pretty';
 
 export default {
@@ -142,13 +143,14 @@ export default {
       this.$store.dispatch('repos/getRepo');
     },
     isActive(f) {
-      return f.unique === this.activeView.unique;
+      return f.id === this.activeView.id;
     },
     isDeepRoutable(type) {
       return type === 'dashboards' || type === 'reports';
     },
-    getDeepRoute() {
-      return { name: 'Dashboard', params: { slug: 'a' } };
+    getDeepRoute(key, file) {
+      const name = capitalize(key).slice(0, -1);
+      return { name, params: { slug: 'a' } };
     },
     getFile(file) {
       this.$store.dispatch('repos/getFile', file);

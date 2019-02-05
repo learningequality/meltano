@@ -8,16 +8,7 @@ const state = {
   validated: false,
   navbarClicked: false,
   errors: [],
-  files: {
-    dashboards: {
-      label: '',
-      items: [{
-        abs: 'loading',
-        path: 'loading',
-        label: 'loading',
-      }],
-    },
-  },
+  files: {},
 };
 
 const getters = {
@@ -52,7 +43,7 @@ const actions = {
   },
 
   getFile({ commit }, file) {
-    repoApi.file(file.unique)
+    repoApi.file(file.id)
       .then((response) => {
         commit('setCurrentFileTable', response.data);
       });
