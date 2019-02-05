@@ -9,12 +9,14 @@ const state = {
   navbarClicked: false,
   errors: [],
   files: {
-    dashboards:
-    [{
-      abs: 'loading',
-      path: 'loading',
-      visual: 'loading',
-    }],
+    dashboards: {
+      label: '',
+      items: [{
+        abs: 'loading',
+        path: 'loading',
+        label: 'loading',
+      }],
+    },
   },
 };
 
@@ -24,7 +26,7 @@ const getters = {
     return state.activeView.populated && state.activeView.is_markdown;
   },
 
-  urlForModelDesign: () => (model, design) => `/design/${model}/${design}`,
+  urlForModelDesign: () => (model, design) => `/analyze/${model}/${design}`,
 
   hasCode() {
     return state.activeView.populated && !state.activeView.is_markdown;

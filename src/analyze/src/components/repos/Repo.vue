@@ -46,30 +46,31 @@
             </nav>
           </template>
           <template v-for="(value, key) in files">
+
             <!-- eslint-disable-next-line vue/require-v-for-key -->
             <p class="menu-label">
-              <a href="#">{{key}}</a>
+              <a href="#">{{value.label}}</a>
             </p>
             <!-- eslint-disable-next-line vue/require-v-for-key -->
             <ul class="menu-list">
 
-              <template v-if="!value.length">
+              <template v-if="!value.items.length">
                 <li>
-                  <a><small><em>No {{key}}</em></small></a>
+                  <a><small><em>No {{value.label}}</em></small></a>
                 </li>
               </template>
 
-              <template v-if="value.length">
-                <li v-for="file in value" :key="file.abs">
+              <template v-if="value.items.length">
+                <li v-for="file in value.items" :key="file.abs">
                   <div class="columns">
                     <div class="column">
                       <a :class="{'is-active': isActive(file)}"
                           @click.prevent='getFile(file)'>
-                        {{file.visual}}
+                        {{file.label}}
                       </a>
                     </div>
                     <div v-if='isDeepRoutable(key)' class='column is-one-fifth'>
-                      <router-link :to="getDeepRoute(key)"
+                      <router-link :to="getDeepRoute(file)"
                                     class="button is-secondary is-light is-pulled-right">
                         <span class="icon is-small">
                           <i class="fas fa-bold">*</i>
@@ -143,12 +144,13 @@ export default {
     isActive(f) {
       return f.unique === this.activeView.unique;
     },
-    // TODO refactor isDeepRoutable/getDeepRoute https://gitlab.com/meltano/meltano/issues/347
     isDeepRoutable(type) {
       return type === 'dashboards' || type === 'reports';
     },
-    getDeepRoute(key) {
-      return `/${key}`;
+    getDeepRoute(file) {
+      console.log('file:', file);
+      // /dashboards/dashboard/<slug> & analyze/<model>/<design>/reports/report/<slug>
+      return { name: 'Dashboard', params: { slug: 'a'} };
     },
     getFile(file) {
       this.$store.dispatch('repos/getFile', file);

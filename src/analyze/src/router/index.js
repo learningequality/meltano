@@ -50,8 +50,13 @@ export default new Router({
       component: Repo,
     },
     {
-      path: '/design/:model/:design',
+      path: '/analyze/:model/:design',
       name: '',
+      component: Design,
+    },
+    {
+      path: '/analyze/:model/:design/reports/report/:slug',
+      name: 'Report',
       component: Design,
     },
     {
@@ -60,8 +65,8 @@ export default new Router({
       component: Dashboards,
     },
     {
-      path: '/dashboards/:id',
-      name: 'Dashboards',
+      path: '/dashboards/dashboard/:slug',
+      name: 'Dashboard',
       component: Dashboards,
     },
     {

@@ -30,40 +30,40 @@ def index():
         if os.path.isfile(os.path.join(meltano_model_path, f))
     ]
     sortedM5oFiles = {
-        "dashboards": [],
-        "documents": [],
-        "models": [],
-        "reports": [],
-        "tables": [],
+        "dashboards": { "label": "Dashboards", "items": [] },
+        "documents": { "label": "Documents", "items": [] },
+        "models": { "label": "Models", "items": [] },
+        "reports": { "label": "Reports", "items": [] },
+        "tables": { "label": "Tables", "items": [] },
     }
     onlydocs = Path(meltano_model_path).parent.glob("*.md")
     for d in onlydocs:
-        file_dict = {"path": str(d), "abs": str(d), "visual": str(d.name)}
+        file_dict = {"path": str(d), "abs": str(d), "label": str(d.name)}
         file_dict["unique"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode(
             "utf-8"
         )
-        sortedM5oFiles["documents"].append(file_dict)
+        sortedM5oFiles["documents"]["items"].append(file_dict)
 
     for f in onlyfiles:
         filename, ext = os.path.splitext(f)
         if ext != ".m5o":
             continue
-        file_dict = {"path": f, "abs": f, "visual": f}
+        file_dict = {"path": f, "abs": f, "label": f}
         file_dict["unique"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode(
             "utf-8"
         )
         filename = filename.lower()
 
         filename, ext = os.path.splitext(filename)
-        file_dict["visual"] = filename
+        file_dict["label"] = filename
         if ext == ".dashboard":
-            sortedM5oFiles["dashboards"].append(file_dict)
+            sortedM5oFiles["dashboards"]["items"].append(file_dict)
         if ext == ".model":
-            sortedM5oFiles["models"].append(file_dict)
+            sortedM5oFiles["models"]["items"].append(file_dict)
         if ext == ".report":
-            sortedM5oFiles["reports"].append(file_dict)
+            sortedM5oFiles["reports"]["items"].append(file_dict)
         if ext == ".table":
-            sortedM5oFiles["tables"].append(file_dict)
+            sortedM5oFiles["tables"]["items"].append(file_dict)
 
     return jsonify(sortedM5oFiles)
 
