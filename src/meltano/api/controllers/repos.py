@@ -30,11 +30,11 @@ def index():
         if os.path.isfile(os.path.join(meltano_model_path, f))
     ]
     sortedM5oFiles = {
-        "dashboards": { "label": "Dashboards", "items": [] },
-        "documents": { "label": "Documents", "items": [] },
-        "models": { "label": "Models", "items": [] },
-        "reports": { "label": "Reports", "items": [] },
-        "tables": { "label": "Tables", "items": [] },
+        "dashboards": {"label": "Dashboards", "items": []},
+        "documents": {"label": "Documents", "items": []},
+        "models": {"label": "Models", "items": []},
+        "reports": {"label": "Reports", "items": []},
+        "tables": {"label": "Tables", "items": []},
     }
     onlydocs = Path(meltano_model_path).parent.glob("*.md")
     for d in onlydocs:

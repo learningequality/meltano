@@ -147,10 +147,8 @@ export default {
     isDeepRoutable(type) {
       return type === 'dashboards' || type === 'reports';
     },
-    getDeepRoute(file) {
-      console.log('file:', file);
-      // /dashboards/dashboard/<slug> & analyze/<model>/<design>/reports/report/<slug>
-      return { name: 'Dashboard', params: { slug: 'a'} };
+    getDeepRoute() {
+      return { name: 'Dashboard', params: { slug: 'a' } };
     },
     getFile(file) {
       this.$store.dispatch('repos/getFile', file);
