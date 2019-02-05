@@ -145,7 +145,7 @@ export default {
     },
     // TODO refactor isDeepRoutable/getDeepRoute https://gitlab.com/meltano/meltano/issues/347
     isDeepRoutable(type) {
-      return type === 'dashboards';
+      return type === 'dashboards' || type === 'reports';
     },
     getDeepRoute(key) {
       return `/${key}`;

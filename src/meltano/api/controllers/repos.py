@@ -30,11 +30,11 @@ def index():
         if os.path.isfile(os.path.join(meltano_model_path, f))
     ]
     sortedM5oFiles = {
-        "documents": [],
-        "tables": [],
-        "models": [],
         "dashboards": [],
+        "documents": [],
+        "models": [],
         "reports": [],
+        "tables": [],
     }
     onlydocs = Path(meltano_model_path).parent.glob("*.md")
     for d in onlydocs:
@@ -56,14 +56,14 @@ def index():
 
         filename, ext = os.path.splitext(filename)
         file_dict["visual"] = filename
-        if ext == ".table":
-            sortedM5oFiles["tables"].append(file_dict)
-        if ext == ".model":
-            sortedM5oFiles["models"].append(file_dict)
         if ext == ".dashboard":
             sortedM5oFiles["dashboards"].append(file_dict)
+        if ext == ".model":
+            sortedM5oFiles["models"].append(file_dict)
         if ext == ".report":
             sortedM5oFiles["reports"].append(file_dict)
+        if ext == ".table":
+            sortedM5oFiles["tables"].append(file_dict)
 
     return jsonify(sortedM5oFiles)
 
