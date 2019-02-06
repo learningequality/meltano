@@ -66,7 +66,7 @@
                     <div class="column">
                       <a :class="{'is-active': isActive(file)}"
                           @click.prevent='getFile(file)'>
-                        {{file.label}}
+                        {{file.name}}
                       </a>
                     </div>
                     <div v-if='isDeepRoutable(key)' class='column is-one-fifth'>
@@ -150,7 +150,8 @@ export default {
     },
     getDeepRoute(key, file) {
       const name = capitalize(key).slice(0, -1);
-      return { name, params: { slug: 'a' } };
+      const params = { slug: file.slug, model: file.model || null, design: file.design || null };
+      return { name, params };
     },
     getFile(file) {
       this.$store.dispatch('repos/getFile', file);

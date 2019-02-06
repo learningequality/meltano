@@ -9,6 +9,7 @@ from flask import Blueprint, jsonify, request
 
 from meltano.api.security import api_auth_required
 from .m5o_file_parser import MeltanoAnalysisFileParser, MeltanoAnalysisFileParserError
+from .m5o_collection_parser import M5oCollectionParser, M5oCollectionParserTypes
 
 reposBP = Blueprint("repos", __name__, url_prefix="/repos")
 meltano_model_path = join(os.getcwd(), "model")
@@ -29,16 +30,20 @@ def index():
         for f in os.listdir(meltano_model_path)
         if os.path.isfile(os.path.join(meltano_model_path, f))
     ]
+
+    path = Path(meltano_model_path)
+    dashboardsParser = M5oCollectionParser(path, M5oCollectionParserTypes.Dashboard)
+    reportsParser = M5oCollectionParser(path, M5oCollectionParserTypes.Report)
     sortedM5oFiles = {
-        "dashboards": {"label": "Dashboards", "items": []},
+        "dashboards": {"label": "Dashboards", "items": dashboardsParser.contents()},
         "documents": {"label": "Documents", "items": []},
         "models": {"label": "Models", "items": []},
-        "reports": {"label": "Reports", "items": []},
+        "reports": {"label": "Reports", "items": reportsParser.contents()},
         "tables": {"label": "Tables", "items": []},
     }
     onlydocs = Path(meltano_model_path).parent.glob("*.md")
     for d in onlydocs:
-        file_dict = {"path": str(d), "abs": str(d), "label": str(d.name)}
+        file_dict = {"path": str(d), "abs": str(d), "name": str(d.name)}
         file_dict["id"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode(
             "utf-8"
         )
@@ -48,20 +53,16 @@ def index():
         filename, ext = os.path.splitext(f)
         if ext != ".m5o":
             continue
-        file_dict = {"path": f, "abs": f, "label": f}
+        file_dict = {"path": f, "abs": f}
         file_dict["id"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode(
             "utf-8"
         )
         filename = filename.lower()
 
         filename, ext = os.path.splitext(filename)
-        file_dict["label"] = filename
-        if ext == ".dashboard":
-            sortedM5oFiles["dashboards"]["items"].append(file_dict)
+        file_dict["name"] = filename
         if ext == ".model":
             sortedM5oFiles["models"]["items"].append(file_dict)
-        if ext == ".report":
-            sortedM5oFiles["reports"]["items"].append(file_dict)
         if ext == ".table":
             sortedM5oFiles["tables"]["items"].append(file_dict)
 

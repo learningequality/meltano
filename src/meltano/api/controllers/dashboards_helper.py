@@ -53,6 +53,7 @@ class DashboardsHelper:
         data["version"] = self.dashboard_version
         data["createdAt"] = time.time()
         data["slug"] = slugify(data["name"])
+        data["description"] = data["description"] or ""
         data["reportIds"] = []
         file_name = data["slug"] + ".dashboard.m5o"
         file_path = Path(self.meltano_model_path).joinpath(file_name)
