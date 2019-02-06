@@ -10,7 +10,7 @@ from .sql_helper import SqlHelper
 class DashboardsHelper:
     def __init__(self):
         self.meltano_model_path = join(os.getcwd(), "model")
-        self.dashboard_version = "0.1.0"
+        self.dashboard_version = "1.0.0"
 
     def get_dashboards(self):
         contents = []

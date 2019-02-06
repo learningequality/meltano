@@ -10,7 +10,7 @@ from .m5oc_file import M5ocFile
 class ReportsHelper:
     def __init__(self):
         self.meltano_model_path = join(os.getcwd(), "model")
-        self.report_version = "0.1.0"
+        self.report_version = "1.0.0"
 
     def has_reports(self):
         m5oc_file = Path(self.meltano_model_path).joinpath("reports.m5oc")
