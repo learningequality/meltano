@@ -4,6 +4,7 @@ import time
 import uuid
 from os.path import join
 from pathlib import Path
+from meltano.core.utils import fill_base_m5o_dict
 from meltano.core.utils import slugify
 
 from .sql_helper import SqlHelper
@@ -49,14 +50,13 @@ class DashboardsHelper:
         return target_dashboard[0]
 
     def save_dashboard(self, data):
-        data["id"] = uuid.uuid4().hex
+        slug = slugify(data["name"])
+        file_name = f"{slug}.dashboard.m5o"
+        file_path = Path(self.meltano_model_path).joinpath(file_name)
+        data = fill_base_m5o_dict(file_path, slug, data)
         data["version"] = self.dashboard_version
-        data["createdAt"] = time.time()
-        data["slug"] = slugify(data["name"])
         data["description"] = data["description"] or ""
         data["reportIds"] = []
-        file_name = data["slug"] + ".dashboard.m5o"
-        file_path = Path(self.meltano_model_path).joinpath(file_name)
         with open(file_path, "w") as f:
             json.dump(data, f)
         return data

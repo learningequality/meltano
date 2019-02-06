@@ -1,3 +1,6 @@
+import os
+import base64
+import time
 import re
 import sys
 import logging
@@ -96,3 +99,15 @@ def file_has_data(file: Union[Path, str]):
 
 def noop(*_args, **_kwargs):
     pass
+
+
+def fill_base_m5o_dict(file, name, file_dict = None):
+    if file_dict is None:
+        file_dict = {}
+    file_dict["path"] = str(file)
+    file_dict["abs"] = str(file)
+    file_dict["id"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode("utf-8")
+    file_dict["name"] = name
+    file_dict["slug"] = slugify(file_dict["name"])
+    file_dict["createdAt"] = time.time()
+    return file_dict

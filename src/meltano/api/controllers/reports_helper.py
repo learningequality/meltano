@@ -6,6 +6,7 @@ from os.path import join
 from pathlib import Path
 from meltano.core.utils import slugify
 
+from meltano.core.utils import fill_base_m5o_dict
 from .m5oc_file import M5ocFile
 
 
@@ -53,12 +54,11 @@ class ReportsHelper:
         return target_report[0]
 
     def save_report(self, data):
-        data["id"] = uuid.uuid4().hex
-        data["version"] = self.report_version
-        data["createdAt"] = time.time()
-        data["slug"] = slugify(data["name"])
-        file_name = data["slug"] + ".report.m5o"
+        slug = slugify(data["name"])
+        file_name = f"{slug}.report.m5o"
         file_path = Path(self.meltano_model_path).joinpath(file_name)
+        data = fill_base_m5o_dict(file_path, slug, data)
+        data["version"] = self.report_version
         with open(file_path, "w") as f:
             json.dump(data, f)
         return data

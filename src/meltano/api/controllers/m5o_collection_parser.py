@@ -44,20 +44,8 @@ class M5oCollectionParser:
         file_list = list(Path(self.directory).glob(self.pattern))
         for file in file_list:
             file_name = file.parts[-1]
-            file_contents = self.get_file_contents(file)
-            parsed_file = self.parse_file_contents(file_contents)
-            files.append(parsed_file)
+            m5oc_file = Path(self.directory).joinpath(file_name)
+            with m5oc_file.open() as f:
+                files.append(json.load(f))
 
         return files
-
-    def get_file_contents(self, file_path):
-        try:
-            return ConfigFactory.parse_string(open(file_path, "r").read())
-        except Exception as e:
-            raise M5oCollectionParserError(str(e), str(file_path.parts[-1]))
-
-    def parse_file_contents(self, file_contents):
-        parsed = {}
-        for prop_name, prop_def in file_contents.items():
-            parsed[prop_name] = prop_def
-        return parsed
