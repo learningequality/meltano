@@ -11,14 +11,14 @@ const state = {
 };
 
 const actions = {
-  getDashboards({ dispatch, commit }, routeParams) {
+  getDashboards({ dispatch, commit }, slug) {
     dashboardApi.getDashboards()
       .then((response) => {
         const dashboards = response.data;
         commit('setDashboards', dashboards);
 
-        if (routeParams.slug) {
-          const dashboardMatch = dashboards.find(dashboard => dashboard.slug === routeParams.slug);
+        if (slug) {
+          const dashboardMatch = dashboards.find(dashboard => dashboard.slug === slug);
           if (dashboardMatch) {
             dispatch('updateCurrentDashboard', dashboardMatch);
           }

@@ -88,7 +88,7 @@ import Chart from '../designs/Chart';
 export default {
   name: 'Dashboards',
   created() {
-    this.getDashboards(this.$route.params);
+    this.getDashboards(this.$route.params.slug);
     this.getReports();
   },
   components: {
