@@ -1,10 +1,15 @@
+import base64
+import json
+import logging
+import os
+import time
+
 from pyhocon import ConfigFactory
 from pathlib import Path
 from jinja2 import Template
 from typing import Dict, List
 
-import logging
-import json
+from meltano.core.utils import slugify
 
 
 class MeltanoAnalysisFileParserError(Exception):
@@ -230,3 +235,15 @@ class MeltanoAnalysisFileParser:
     @classmethod
     def name_flatten_dict(cls, d: Dict) -> List:
         return [{"name": k, **rest} for k, rest in d.items()]
+
+    @staticmethod
+    def fill_base_m5o_dict(file, name, file_dict = None):
+        if file_dict is None:
+            file_dict = {}
+        file_dict["path"] = str(file)
+        file_dict["abs"] = str(file)
+        file_dict["id"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode("utf-8")
+        file_dict["name"] = name
+        file_dict["slug"] = slugify(file_dict["name"])
+        file_dict["createdAt"] = time.time()
+        return file_dict

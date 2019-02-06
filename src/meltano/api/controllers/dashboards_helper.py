@@ -4,9 +4,8 @@ import time
 import uuid
 from os.path import join
 from pathlib import Path
-from meltano.core.utils import fill_base_m5o_dict
 from meltano.core.utils import slugify
-
+from .m5o_file_parser import MeltanoAnalysisFileParser
 from .sql_helper import SqlHelper
 
 
@@ -53,7 +52,7 @@ class DashboardsHelper:
         slug = slugify(data["name"])
         file_name = f"{slug}.dashboard.m5o"
         file_path = Path(self.meltano_model_path).joinpath(file_name)
-        data = fill_base_m5o_dict(file_path, slug, data)
+        data = MeltanoAnalysisFileParser.fill_base_m5o_dict(file_path, slug, data)
         data["version"] = self.dashboard_version
         data["description"] = data["description"] or ""
         data["reportIds"] = []
