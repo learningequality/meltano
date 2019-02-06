@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Fixes
 
 ### Breaks
-
+* New standardized approach for `.m5o` id generation (will need to remove any dashboard.m5o and report.m5o)
 
 ## 0.9.0 - (2019-02-05)
 ---
