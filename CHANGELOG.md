@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+* Add deep linking to dashboards
+* Add deep linking to reports
 
 ### Changes
 
