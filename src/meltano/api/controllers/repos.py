@@ -81,7 +81,12 @@ def file(unique_id):
             data = markdown.markdown(data)
             is_markdown = True
         return jsonify(
-            {"file": data, "is_markdown": is_markdown, "id": unique_id, "populated": True}
+            {
+                "file": data,
+                "is_markdown": is_markdown,
+                "id": unique_id,
+                "populated": True,
+            }
         )
 
 

@@ -15,8 +15,8 @@ class M5oCollectionParserError(Exception):
 
 
 class M5oCollectionParserTypes(Enum):
-    Dashboard = 'dashboard'
-    Report = 'report'
+    Dashboard = "dashboard"
+    Report = "report"
 
 
 class M5oCollectionParser:
@@ -27,8 +27,8 @@ class M5oCollectionParser:
         self.files = []
 
     def contents(self):
-        files = self.parse();
-        self.compile(files);
+        files = self.parse()
+        self.compile(files)
         return self.files
 
     def compile(self, files):
