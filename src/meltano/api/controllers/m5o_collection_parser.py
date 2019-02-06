@@ -22,8 +22,8 @@ class M5oCollectionParserTypes(Enum):
 class M5oCollectionParser:
     def __init__(self, directory, file_type):
         self.directory = directory
-        self.file_type = file_type.value
-        self.pattern = f"*.{self.file_type}.m5o"
+        self.file_type = file_type
+        self.pattern = f"*.{self.file_type.value}.m5o"
         self.files = []
 
     def contents(self):
@@ -33,7 +33,7 @@ class M5oCollectionParser:
 
     def compile(self, files):
         self.files = files
-        compiled_file_name = f"{self.file_type}s.m5oc"
+        compiled_file_name = f"{self.file_type.value}s.m5oc"
         compiled_file_path = Path(self.directory).joinpath(compiled_file_name)
         compiled_file = open(compiled_file_path, "w")
         compiled_file.write(json.dumps(self.files))
