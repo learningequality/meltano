@@ -11,18 +11,24 @@ const state = {
 };
 
 const actions = {
-  getDashboards({ commit }) {
+  getDashboards({ dispatch, commit }, routeParams) {
     dashboardApi.getDashboards()
       .then((response) => {
         const dashboards = response.data;
         commit('setDashboards', dashboards);
+
+        if (routeParams.slug) {
+          const dashboardMatch = dashboards.find(dashboard => dashboard.slug === routeParams.slug);
+          if (dashboardMatch) {
+            dispatch('updateCurrentDashboard', dashboardMatch);
+          }
+        }
       });
   },
-  getDashboard({ commit }, dashboard) {
+  getDashboard({ dispatch }, dashboard) {
     dashboardApi.getDashboard(dashboard.id)
       .then((response) => {
-        commit('setAddDashboard', false);
-        commit('setCurrentDashboard', response.data);
+        dispatch('updateCurrentDashboard', response.data);
       });
   },
   getReports({ commit }) {
@@ -42,28 +48,29 @@ const actions = {
   setAddDashboard({ commit }, value) {
     commit('setAddDashboard', value);
   },
-  saveDashboard({ commit }, data) {
+  saveDashboard({ dispatch, commit }, data) {
     dashboardApi.saveDashboard(data)
       .then((response) => {
-        commit('setAddDashboard', false);
-        commit('setCurrentDashboard', response.data);
+        dispatch('updateCurrentDashboard', response.data);
         commit('addSavedDashboardToDashboards', response.data);
         commit('resetSaveDashboardSettings');
       });
   },
-  addReportToDashboard({ commit }, data) {
+  addReportToDashboard({ dispatch }, data) {
     dashboardApi.addReportToDashboard(data)
       .then((response) => {
-        commit('setAddDashboard', false);
-        commit('setCurrentDashboard', response.data);
+        dispatch('updateCurrentDashboard', response.data);
       });
   },
-  removeReportFromDashboard({ commit }, data) {
+  removeReportFromDashboard({ dispatch }, data) {
     dashboardApi.removeReportFromDashboard(data)
       .then((response) => {
-        commit('setAddDashboard', false);
-        commit('setCurrentDashboard', response.data);
+        dispatch('updateCurrentDashboard', response.data);
       });
+  },
+  updateCurrentDashboard({ commit }, dashboard) {
+    commit('setAddDashboard', false);
+    commit('setCurrentDashboard', dashboard);
   },
 };
 
