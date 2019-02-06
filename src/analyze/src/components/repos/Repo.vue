@@ -151,9 +151,9 @@ export default {
     getDeepRoute(key, file) {
       const name = capitalize(key).slice(0, -1);
       const params = { slug: file.slug };
-      if(file.model && file.design) {
-        params.model = file.model
-        params.design = file.design
+      if (file.model && file.design) {
+        params.model = file.model;
+        params.design = file.design;
       }
       return { name, params };
     },
