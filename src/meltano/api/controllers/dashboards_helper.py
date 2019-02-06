@@ -1,7 +1,5 @@
 import os
 import json
-import time
-import uuid
 from os.path import join
 from pathlib import Path
 from meltano.core.utils import slugify
