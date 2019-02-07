@@ -11,19 +11,27 @@ const state = {
 };
 
 const actions = {
+  initialize({ dispatch }, slug) {
+    dispatch('getReports').then(() => {
+      dispatch('getDashboards', slug);
+    });
+  },
   getDashboards({ dispatch, commit }, slug) {
-    dashboardApi.getDashboards()
-      .then((response) => {
-        const dashboards = response.data;
-        commit('setDashboards', dashboards);
+    return new Promise((resolve) => {
+      dashboardApi.getDashboards()
+        .then((response) => {
+          const dashboards = response.data;
+          commit('setDashboards', dashboards);
+          resolve();
 
-        if (slug) {
-          const dashboardMatch = dashboards.find(dashboard => dashboard.slug === slug);
-          if (dashboardMatch) {
-            dispatch('updateCurrentDashboard', dashboardMatch);
+          if (slug) {
+            const dashboardMatch = dashboards.find(dashboard => dashboard.slug === slug);
+            if (dashboardMatch) {
+              dispatch('updateCurrentDashboard', dashboardMatch);
+            }
           }
-        }
-      });
+        });
+    });
   },
   getDashboard({ dispatch }, dashboard) {
     dashboardApi.getDashboard(dashboard.id)
@@ -32,10 +40,13 @@ const actions = {
       });
   },
   getReports({ commit }) {
-    designApi.loadReports()
-      .then((response) => {
-        commit('setReports', response.data);
-      });
+    return new Promise((resolve) => {
+      designApi.loadReports()
+        .then((response) => {
+          commit('setReports', response.data);
+          resolve();
+        });
+    });
   },
   setAddDashboard({ commit }, value) {
     commit('setAddDashboard', value);
