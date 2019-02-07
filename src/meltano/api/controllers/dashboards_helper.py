@@ -3,6 +3,7 @@ import json
 from os.path import join
 from pathlib import Path
 from meltano.core.utils import slugify
+from .m5o_collection_parser import M5oCollectionParser, M5oCollectionParserTypes
 from .m5o_file_parser import MeltanoAnalysisFileParser
 from .sql_helper import SqlHelper
 
@@ -13,14 +14,9 @@ class DashboardsHelper:
         self.dashboard_version = "1.0.0"
 
     def get_dashboards(self):
-        contents = []
-        dashboard_files = list(Path(self.meltano_model_path).glob("*.dashboard.m5o"))
-        for dashboard in dashboard_files:
-            file_name = dashboard.parts[-1]
-            file = Path(self.meltano_model_path).joinpath(file_name)
-            with file.open() as f:
-                contents.append(json.load(f))
-        return contents
+        path = Path(self.meltano_model_path)
+        dashboardsParser = M5oCollectionParser(path, M5oCollectionParserTypes.Dashboard)
+        return dashboardsParser.contents()
 
     def get_dashboard_reports_with_query_results(self, reports):
         sqlHelper = SqlHelper()
