@@ -25,7 +25,7 @@
                 <ul>
                   <li v-for="report in reports" :key="report.id">
                     <label for="'checkbox-' + report.id"
-                            @click="toggleReportInDashboard(report)">
+                            @click.stop="toggleReportInDashboard(report)">
                       <input type="checkbox"
                             :id="'checkbox-' + report.id"
                             :checked="isReportInActiveDashboard(report)">
@@ -88,8 +88,8 @@ import Chart from '../designs/Chart';
 export default {
   name: 'Dashboards',
   created() {
-    this.getDashboards(this.$route.params.slug);
     this.getReports();
+    this.getDashboards(this.$route.params.slug);
   },
   components: {
     Chart,
@@ -109,7 +109,6 @@ export default {
       'getDashboards',
       'getDashboard',
       'getReports',
-      'getActiveDashboardReportsWithQueryResults',
       'setAddDashboard',
     ]),
     isActive(dashboard) {
@@ -129,11 +128,6 @@ export default {
         reportId: report.id,
         dashboardId: this.activeDashboard.id,
       });
-    },
-  },
-  watch: {
-    activeDashboard() {
-      this.getActiveDashboardReportsWithQueryResults();
     },
   },
 };

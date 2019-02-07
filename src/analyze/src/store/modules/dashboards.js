@@ -37,14 +37,6 @@ const actions = {
         commit('setReports', response.data);
       });
   },
-  getActiveDashboardReportsWithQueryResults({ commit }) {
-    const ids = state.activeDashboard.reportIds;
-    const activeReports = state.reports.filter(report => ids.includes(report.id));
-    dashboardApi.getActiveDashboardReportsWithQueryResults(activeReports)
-      .then((response) => {
-        commit('setActiveDashboardReports', response.data);
-      });
-  },
   setAddDashboard({ commit }, value) {
     commit('setAddDashboard', value);
   },
@@ -68,9 +60,18 @@ const actions = {
         dispatch('updateCurrentDashboard', response.data);
       });
   },
-  updateCurrentDashboard({ commit }, dashboard) {
+  updateCurrentDashboard({ dispatch, commit }, dashboard) {
     commit('setAddDashboard', false);
     commit('setCurrentDashboard', dashboard);
+    dispatch('updateActiveDashboardReportsWithQueryResults');
+  },
+  updateActiveDashboardReportsWithQueryResults({ commit }) {
+    const ids = state.activeDashboard.reportIds;
+    const activeReports = state.reports.filter(report => ids.includes(report.id));
+    dashboardApi.getActiveDashboardReportsWithQueryResults(activeReports)
+      .then((response) => {
+        commit('setActiveDashboardReports', response.data);
+      });
   },
 };
 
