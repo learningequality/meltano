@@ -1,3 +1,4 @@
+import base64
 import re
 import sys
 import logging
@@ -92,6 +93,14 @@ def get_all(keys, d: dict, default=None):
 def file_has_data(file: Union[Path, str]):
     file = Path(file)  # ensure it is a Path object
     return file.exists() and file.stat().st_size > 0
+
+
+def decode_file_path_from_id(unique_id):
+    return base64.b32decode(unique_id).decode("utf-8")
+
+
+def encode_id_from_file_path(file_path):
+    return base64.b32encode(bytes(file_path, "utf-8")).decode("utf-8")
 
 
 def noop(*_args, **_kwargs):

@@ -1,4 +1,3 @@
-import base64
 import json
 import logging
 import os
@@ -9,6 +8,7 @@ from pathlib import Path
 from jinja2 import Template
 from typing import Dict, List
 
+from meltano.core.utils import encode_id_from_file_path
 from meltano.core.utils import slugify
 
 
@@ -242,9 +242,7 @@ class MeltanoAnalysisFileParser:
             file_dict = {}
         file_dict["path"] = str(file)
         file_dict["abs"] = str(file)
-        file_dict["id"] = base64.b32encode(bytes(file_dict["abs"], "utf-8")).decode(
-            "utf-8"
-        )
+        file_dict["id"] = encode_id_from_file_path(file_dict["abs"])
         file_dict["name"] = name
         file_dict["slug"] = slugify(file_dict["name"])
         file_dict["createdAt"] = time.time()

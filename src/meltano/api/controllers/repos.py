@@ -1,4 +1,3 @@
-import base64
 import json
 import os
 from pathlib import Path
@@ -7,6 +6,7 @@ from os.path import join
 import markdown
 from flask import Blueprint, jsonify, request
 
+from meltano.core.utils import decode_file_path_from_id
 from meltano.api.security import api_auth_required
 from .m5o_file_parser import MeltanoAnalysisFileParser, MeltanoAnalysisFileParserError
 from .m5o_collection_parser import M5oCollectionParser, M5oCollectionParserTypes
@@ -65,7 +65,7 @@ def index():
 
 @reposBP.route("/file/<unique_id>", methods=["GET"])
 def file(unique_id):
-    file_path = base64.b32decode(unique_id).decode("utf-8")
+    file_path = decode_file_path_from_id(unique_id)
     (filename, ext) = os.path.splitext(file_path)
     is_markdown = False
     path_to_file = os.path.abspath(os.path.join(meltano_model_path, file_path))
