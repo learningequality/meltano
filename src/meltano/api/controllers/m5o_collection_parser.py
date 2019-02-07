@@ -41,11 +41,10 @@ class M5oCollectionParser:
 
     def parse(self):
         files = []
-        file_list = list(Path(self.directory).glob(self.pattern))
-        for file in file_list:
+        for file in Path(self.directory).glob(self.pattern):
             file_name = file.parts[-1]
-            m5oc_file = Path(self.directory).joinpath(file_name)
-            with m5oc_file.open() as f:
+            m5o_file = Path(self.directory).joinpath(file_name)
+            with m5o_file.open() as f:
                 files.append(json.load(f))
 
         return files
