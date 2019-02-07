@@ -9,9 +9,10 @@ from .sql_helper import SqlHelper
 
 
 class DashboardsHelper:
+    VERSION = "1.0.0"
+
     def __init__(self):
         self.meltano_model_path = join(os.getcwd(), "model")
-        self.dashboard_version = "1.0.0"
 
     def get_dashboards(self):
         path = Path(self.meltano_model_path)
@@ -47,7 +48,7 @@ class DashboardsHelper:
         file_name = f"{slug}.dashboard.m5o"
         file_path = Path(self.meltano_model_path).joinpath(file_name)
         data = MeltanoAnalysisFileParser.fill_base_m5o_dict(file_path, slug, data)
-        data["version"] = self.dashboard_version
+        data["version"] = VERSION
         data["description"] = data["description"] or ""
         data["reportIds"] = []
         with open(file_path, "w") as f:
