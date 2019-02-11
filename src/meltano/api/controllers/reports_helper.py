@@ -28,7 +28,7 @@ class ReportsHelper:
         file_name = f"{slug}.report.m5o"
         file_path = Path(self.meltano_model_path).joinpath(file_name)
         data = MeltanoAnalysisFileParser.fill_base_m5o_dict(file_path, slug, data)
-        data["version"] = VERSION
+        data["version"] = ReportsHelper.VERSION
         with open(file_path, "w") as f:
             json.dump(data, f)
         return data

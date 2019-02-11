@@ -18,6 +18,10 @@ class M5oCollectionParserTypes(Enum):
     Dashboard = "dashboard"
     Report = "report"
 
+    @classmethod
+    def has_value(cls, value):
+        return any(value == item.value for item in cls)
+
 
 class M5oCollectionParser:
     def __init__(self, directory, file_type):
