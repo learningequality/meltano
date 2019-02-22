@@ -23,7 +23,9 @@ def gitlab_client():
 class TestSecurity:
     @pytest.mark.parametrize(
         "flask_env,current_user_cls",
-        [("development", FreeUser), ("production", AnonymousUser)],
+        [("development", FreeUser),
+         ("production", AnonymousUser),
+         (None, FreeUser)],
     )
     def test_auth_mode(self, monkeypatch, create_app, flask_env, current_user_cls):
         monkeypatch.setenv("FLASK_ENV", flask_env)
@@ -34,7 +36,7 @@ class TestSecurity:
 
     @mock.patch("gitlab.Gitlab", return_value=gitlab_client())
     @pytest.mark.usefixtures("app_context")
-    def test_gitlab_token_identity_creates_user(self, gitlab, create_app):
+    def test_gitlab_token_identity_creates_user(self, gitab, create_app):
         app = create_app(ENV="production")
 
         token = {
