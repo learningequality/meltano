@@ -1,5 +1,7 @@
 import yaml
 import fnmatch
+import re
+from functools import reduce
 from collections import namedtuple
 from enum import Enum
 
@@ -14,6 +16,50 @@ class YAMLEnum(str, Enum):
 
 
 yaml.add_multi_representer(YAMLEnum, YAMLEnum.yaml_representer)
+
+class IncompatibleELTContext(Exception):
+    """
+    Occurs when the ELTContext of all invoked plugins cannot
+    be merged.
+    """
+    pass
+
+
+class ELTContext():
+    __attrs__ = ("source_name", "warehouse_type", "transformer")
+
+    def __init__(self,
+                 source_name=None,
+                 warehouse_type=None,
+                 transformer=None):
+        self.source_name = source_name
+        self.warehouse_type = warehouse_type
+        self.transformer = transformer
+
+    @classmethod
+    def merge(cls, *contexts):
+        merged = ELTContext()
+
+        for ctx in contexts:
+            for attr in cls.__attrs__:
+                old_value = getattr(merged, attr)
+                new_value = getattr(ctx, attr)
+                if old_value and new_value and old_value != new_value:
+                    print(old_value)
+                    print(new_value)
+                    raise IncompatibleELTContext()
+                else:
+                    setattr(merged, attr, new_value)
+
+        return merged
+
+    def __eq__(self, other):
+        return (self.source_name == other.source_name
+                and self.warehouse_type == other.warehouse_type
+                and self.transformer == other.transformer)
+
+    def __repr__(self):
+        return f"<ELT from={self.source_name} into={self.warehouse_type} xform={self.transformer}>"
 
 
 class PluginType(YAMLEnum):
@@ -59,6 +105,14 @@ class Plugin:
             canonical.update(**self._extras)
 
         return canonical
+
+    @property
+    def elt_context(self):
+        if not self.__elt_context__:
+            raise NotImplemented("__elt_context__ is not set, cannot infer from name.")
+
+        match = re.search(self.__elt_context__, self.name)
+        return ELTContext(**match.groupdict())
 
     @property
     def config_files(self):

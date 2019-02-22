@@ -1,9 +1,11 @@
 import json
 import logging
+import re
 from typing import Dict
 from meltano.core.plugin_invoker import PluginInvoker
 from meltano.core.utils import file_has_data
 from meltano.core.behavior.hookable import hook
+from meltano.core.plugin import ELTContext
 from meltano.core.plugin.error import PluginExecutionError
 
 from . import SingerPlugin, PluginType
@@ -12,6 +14,7 @@ from .catalog import visit, SelectExecutor
 
 class SingerTap(SingerPlugin):
     __plugin_type__ = PluginType.EXTRACTORS
+    __elt_context__ = r"tap-(?P<source_name>.*)"
 
     def exec_args(self, files: Dict):
         """

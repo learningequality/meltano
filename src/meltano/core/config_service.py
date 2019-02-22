@@ -1,12 +1,42 @@
 import os
 import yaml
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from .project import Project
 from .plugin import Plugin, PluginType
-from .plugin.singer import plugin_factory
+from .plugin.singer import SingerTap, SingerTarget
 from .plugin.dbt import DbtPlugin, DbtTransformPlugin
 from .plugin.error import PluginMissingError
+
+
+def infer_plugin_name(self, plugin_type: PluginType, elt_context: ELTContext):
+    strategy = {
+        PluginType.EXTRACTORS: lambda: f"tap-{elt_context.source_name}",
+        PluginType.LOADERS: lambda: f"target-{elt_context.warehouse_type}",
+        PluginType.TRANSFORMERS: lambda: elt_context.transformer,
+        PluginType.TRANSFORMS: lambda: f"{elt_context.transfomer}-{elt_context.source_name}-{elt_context.warehouse_type}",
+    }
+
+    return plugin_class[plugin_type].infer(elt_context)
+
+
+def plugin_class(self, plugin_type: PluginType):
+    class_map = {
+        PluginType.EXTRACTORS: SingerTap,
+        PluginType.LOADERS: SingerTarget,
+        PluginType.TRANSFORMERS: DbtPlugin,
+        PluginType.TRANSFORMS: DbtTransformPlugin,
+    }
+
+    return class_map[plugin_type]
+
+
+def plugin_factory(self, plugin_type: PluginType, plugin_def: Dict):
+    plugin_class = plugin_class[plugin_type]
+
+    # this will parse the discovery file and create an instance of the
+    # corresponding `plugin_class` for all the plugins.
+    return plugin_class[plugin_type](**plugin_def)
 
 
 class ConfigService:
@@ -54,11 +84,3 @@ class ConfigService:
             ).items()
             for plugin_def in plugin_defs
         )
-
-    def plugin_generator(self, plugin_type: PluginType, plugin_def: Dict):
-        if plugin_type == PluginType.TRANSFORMERS:
-            return DbtPlugin(**plugin_def)
-        elif plugin_type == PluginType.TRANSFORMS:
-            return DbtTransformPlugin(**plugin_def)
-        else:
-            return plugin_factory(plugin_type, plugin_def)

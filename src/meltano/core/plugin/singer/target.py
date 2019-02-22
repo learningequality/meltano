@@ -1,10 +1,12 @@
 from typing import Dict
 
+from meltano.core.plugin import ELTContext
 from . import SingerPlugin, PluginType
 
 
 class SingerTarget(SingerPlugin):
     __plugin_type__ = PluginType.LOADERS
+    __elt_context__ = r"target-(?P<warehouse_type>.*)"
 
     def exec_args(self, files: Dict):
         args = ["--config", files["config"]]
