@@ -1,0 +1,10 @@
+plugins:
+  extractors:
+  - config: null
+    name: tap-carbon-intensity
+    pip_url: git+https://gitlab.com/meltano/tap-carbon-intensity
+  loaders:
+  - config:
+      database: $SQLITE_DATABASE
+    name: target-sqlite
+    pip_url: git+https://gitlab.com/meltano/target-sqlite.git

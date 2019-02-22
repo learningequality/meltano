@@ -52,8 +52,10 @@ class PluginInstallService:
         try:
             with plugin.trigger_hooks("install", self.project):
                 install_result = self.venv_service.install(
-                    namespace=plugin.type, name=plugin.name, pip_url=plugin.pip_url
+                    namespace=plugin.type,
+                    name=plugin.name,
+                    pip_url=plugin.pip_url
                 )
                 return install_result
         except Exception as err:
-            raise PluginInstallError()
+            raise PluginInstallError() from err

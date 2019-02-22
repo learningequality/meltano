@@ -42,11 +42,12 @@ class ELTContext():
 
         for ctx in contexts:
             for attr in cls.__attrs__:
-                old_value = getattr(merged, attr)
                 new_value = getattr(ctx, attr)
-                if old_value and new_value and old_value != new_value:
-                    print(old_value)
-                    print(new_value)
+                if not new_value:
+                    continue
+
+                old_value = getattr(merged, attr)
+                if old_value and old_value != new_value:
                     raise IncompatibleELTContext()
                 else:
                     setattr(merged, attr, new_value)

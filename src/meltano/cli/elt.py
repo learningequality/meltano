@@ -2,6 +2,7 @@ import os
 import logging
 import click
 import datetime
+from retrying import retry
 
 from . import cli
 from .add import add_plugin, add_transform
@@ -10,7 +11,7 @@ from meltano.core.config_service import ConfigService
 from meltano.core.runner.singer import SingerRunner
 from meltano.core.runner.dbt import DbtRunner
 from meltano.core.project import Project, ProjectNotFound
-from meltano.core.plugin import PluginType
+from meltano.core.plugin import PluginType, ELTContext, infer_plugin_name
 from meltano.core.plugin.error import PluginMissingError
 from meltano.core.transform_add_service import TransformAddService
 from meltano.core.tracking import GoogleAnalyticsTracker
@@ -34,6 +35,7 @@ def elt(project, extractor, loader, dry, transform, job_id, engine_uri):
     extractor_name: Which extractor should be used in this extraction
     loader_name: Which loader should be used in this extraction
     """
+    config_service = ConfigService(project)
 
     # register the project engine
     project_engine(project, engine_uri, default=True)
@@ -53,6 +55,14 @@ def elt(project, extractor, loader, dry, transform, job_id, engine_uri):
 
     dbt_runner = DbtRunner(project)
 
+    extractor_plugin = get_or_install_plugin(config_service, PluginType.EXTRACTORS, extractor)
+    loader_plugin = get_or_install_plugin(config_service, PluginType.LOADERS, loader)
+    transformer_plugin = get_or_install_plugin(config_service, PluginType.TRANSFORMERS, "dbt")
+
+    elt_context = ELTContext.merge(extractor_plugin.elt_context,
+                                    loader_plugin.elt_context,
+                                    transformer_plugin.elt_context)
+
     try:
         if transform != "only":
             click.echo("Running extract & load...")
@@ -63,7 +73,7 @@ def elt(project, extractor, loader, dry, transform, job_id, engine_uri):
 
         if transform != "skip":
             click.echo("Running transformation...")
-            dbt_runner.run(dry_run=dry, models=extractor)
+            dbt_runner.run(dry_run=dry, models=elt_context.source_name)
             click.secho("Transformation complete!", fg="green")
         else:
             click.secho("Transformation skipped.", fg="yellow")
@@ -81,38 +91,34 @@ def install_missing_plugins(
 ):
     config_service = ConfigService(project)
 
-    if transform != "only":
-        try:
-            config_service.get_plugin(PluginType.EXTRACTORS, extractor)
-        except PluginMissingError as e:
-            click.secho(
-                f"Extractor {extractor} is missing. Trying to install it.", fg="green"
-            )
-            add_plugin(project, PluginType.EXTRACTORS, extractor)
-
-        try:
-            config_service.get_plugin(PluginType.LOADERS, loader)
-        except PluginMissingError as e:
-            click.secho(
-                f"Loader {loader} is missing. Trying to install it.", fg="green"
-            )
-            add_plugin(project, PluginType.LOADERS, loader)
+    extractor_plugin = get_or_install_plugin(config_service, PluginType.EXTRACTORS, extractor)
+    loader_plugin = get_or_install_plugin(config_service, PluginType.LOADERS, loader)
+    transformer_plugin = None
 
     if transform != "skip":
-        try:
-            config_service.get_plugin(PluginType.TRANSFORMERS, "dbt")
-        except PluginMissingError as e:
-            click.secho(f"dbt is missing. Trying to install it.", fg="green")
-            add_plugin(project, PluginType.TRANSFORMERS, "dbt")
+        transformer_plugin = get_or_install_plugin(config_service, PluginType.TRANSFORMERS, "dbt")
+
+        elt_context = ELTContext.merge(extractor_plugin.elt_context,
+                                       loader_plugin.elt_context,
+                                       transformer_plugin.elt_context)
 
         transform_add_service = TransformAddService(project)
-        try:
-            plugin = config_service.get_plugin(PluginType.TRANSFORMS, extractor)
+        transform_name = infer_plugin_name(PluginType.TRANSFORMS, elt_context)
+        transform_plugin = get_or_install_plugin(config_service, PluginType.TRANSFORMS, transform_name)
 
-            # Update dbt_project.yml in case the vars values have changed in meltano.yml
-            transform_add_service.update_dbt_project(plugin)
-        except PluginMissingError as e:
-            click.secho(
-                f"Transform {extractor} is missing. Trying to install it.", fg="green"
+        # Update dbt_project.yml in case the vars values have changed in meltano.yml
+        transform_add_service.update_dbt_project(transform_plugin)
+
+
+@retry(stop_max_attempt_number=2)
+def get_or_install_plugin(config_service, plugin_type, plugin_name):
+    try:
+        return config_service.get_plugin(plugin_type, plugin_name)
+    except PluginMissingError as e:
+        click.secho(
+            f"{plugin_type} {plugin_name} is missing. Trying to install it.", fg="green"
             )
-            add_transform(project, extractor)
+        add_plugin(config_service.project, plugin_type, plugin_name)
+
+        # triggers the retry
+        raise e

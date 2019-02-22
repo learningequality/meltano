@@ -3,40 +3,8 @@ import yaml
 from typing import Dict, List, Optional
 
 from .project import Project
-from .plugin import Plugin, PluginType
-from .plugin.singer import SingerTap, SingerTarget
-from .plugin.dbt import DbtPlugin, DbtTransformPlugin
+from .plugin import Plugin, PluginType, plugin_factory
 from .plugin.error import PluginMissingError
-
-
-def infer_plugin_name(self, plugin_type: PluginType, elt_context: ELTContext):
-    strategy = {
-        PluginType.EXTRACTORS: lambda: f"tap-{elt_context.source_name}",
-        PluginType.LOADERS: lambda: f"target-{elt_context.warehouse_type}",
-        PluginType.TRANSFORMERS: lambda: elt_context.transformer,
-        PluginType.TRANSFORMS: lambda: f"{elt_context.transfomer}-{elt_context.source_name}-{elt_context.warehouse_type}",
-    }
-
-    return plugin_class[plugin_type].infer(elt_context)
-
-
-def plugin_class(self, plugin_type: PluginType):
-    class_map = {
-        PluginType.EXTRACTORS: SingerTap,
-        PluginType.LOADERS: SingerTarget,
-        PluginType.TRANSFORMERS: DbtPlugin,
-        PluginType.TRANSFORMS: DbtTransformPlugin,
-    }
-
-    return class_map[plugin_type]
-
-
-def plugin_factory(self, plugin_type: PluginType, plugin_def: Dict):
-    plugin_class = plugin_class[plugin_type]
-
-    # this will parse the discovery file and create an instance of the
-    # corresponding `plugin_class` for all the plugins.
-    return plugin_class[plugin_type](**plugin_def)
 
 
 class ConfigService:
@@ -78,7 +46,7 @@ class ConfigService:
         # this will parse the meltano.yml file and create an instance of the
         # corresponding `plugin_class` for all the plugins.
         return (
-            self.plugin_generator(plugin_type, plugin_def)
+            plugin_factory(plugin_type, plugin_def)
             for plugin_type, plugin_defs in self.project.meltano.get(
                 "plugins", {}
             ).items()
