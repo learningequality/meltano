@@ -81,11 +81,15 @@ pages:
   cache:
     paths:
       - node_modules/
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq sshpass
   script:
     - cd docs
     - yarn
     - yarn build:docs
-    - mv public ../public
+    - sshpass -V
+    - export SSHPASS=$SERVER_PASSWORD
+    - sshpass -e scp -o stricthostkeychecking=no -r . hello@meltano.com:/var/www/vue
   artifacts:
     paths:
       - public
