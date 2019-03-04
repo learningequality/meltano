@@ -76,7 +76,7 @@ package:
       - dist
 
 pages:
-  stage: pages
+  stage: test
   image: node:9.11.1
   cache:
     paths:
