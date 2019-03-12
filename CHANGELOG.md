@@ -12,6 +12,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Changes
 
+*  Update documentation to include instruction for upgrading to the current version
+*  Remove `meltano -v` command from the docs (not currently working)
+
 ### Fixes
 
 ### Breaks
