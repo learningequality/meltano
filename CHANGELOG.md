@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Changes
 * Various documentation [installation and tutorial improvements](https://gitlab.com/meltano/meltano/issues/467#note_149858308)
 * Added troubleshooting button to help users add context to a pre-filled bug issue
+* Add user stories to the [Personas documentation](https://meltano.com/docs/personas.html) 
 
 ### Fixes
 * Replaced the stale Meltano UI example image in the Carbon Emissions tutorial
