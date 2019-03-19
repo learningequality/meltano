@@ -217,7 +217,8 @@ explain_makefile:
 # Release
 # =====================
 release:
-	git diff --quiet || { echo "Working directory is dirty, please commit or stash your changes."; exit 1; } && \
+	@git diff --quiet || { echo "Working directory is dirty, please commit or stash your changes."; exit 1; } && \
 	changelog release --yes && \
 	git add CHANGELOG.md && \
+	echo "Tagging `changelog current`, use 'git push --tags' to publish it." && \
 	bumpversion --tag --allow-dirty --new-version `changelog current` minor
