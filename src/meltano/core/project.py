@@ -142,6 +142,10 @@ class Project:
         return self.meltano_dir("models", *joinpaths)
 
     @makedirs
+    def custom_model_dir(self, *joinpaths):
+        return self.root.joinpath("model", *joinpaths)
+
+    @makedirs
     def plugin_dir(self, plugin: Plugin, *joinpaths):
         return self.meltano_dir(plugin.type, plugin.name, *joinpaths)
 

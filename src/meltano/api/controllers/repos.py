@@ -70,6 +70,7 @@ def before_request():
 @project_from_slug
 def index(project):
     onlyfiles = [f for f in project.model_dir().iterdir() if f.is_file()]
+    onlyfiles += [f for f in project.custom_model_dir().iterdir() if f.is_file()]
 
     path = project.model_dir()
     dashboardsParser = M5oCollectionParser(path, M5oCollectionParserTypes.Dashboard)

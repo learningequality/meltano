@@ -36,12 +36,14 @@ class ProjectCompiler:
 
     def compile(self):
         try:
+            to_compile = []
             if not self._parsed:
                 self.parse()
             if self.topics:
-                self.parser.compile(self.topics)
+                to_compile += self.topics
             if self.package_topics:
-                self.parser.compile(self.package_topics)
+                to_compile += self.package_topics
+            self.parser.compile(to_compile)
             logging.debug(f"Successfully compiled topics")
         except MeltanoAnalysisFileParserError as e:
             logging.warn(f"Failed to compile topics: {e}")
