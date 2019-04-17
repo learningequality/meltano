@@ -108,6 +108,9 @@ class Plugin(HookObject):
     def executable(self):
         return self._extras.get("executable", self.name)
 
+    def cwd(self, project):
+        return project.root
+
     def add_select_filter(self, filter: str):
         self._select.add(filter)
 

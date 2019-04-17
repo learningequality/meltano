@@ -69,10 +69,13 @@ class PluginInvoker:
             if prepare:
                 self.prepare()
 
-            with self.plugin.trigger_hooks("invoke", self, args):
+            with self.plugin.trigger_hooks("invoke", self, args, Popen):
                 popen_args = [*self.exec_args(), *args]
                 logging.debug(f"Invoking: {popen_args}")
-                process = subprocess.Popen(popen_args, env=env, **Popen)
+                process = subprocess.Popen(popen_args,
+                                           env=env,
+                                           cwd=str(self.plugin.cwd(project)),
+                                           **Popen)
         except SubprocessError as perr:
             logging.error(f"{self.plugin.name} has failed: {str(perr)}")
             raise
