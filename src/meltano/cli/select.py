@@ -8,8 +8,8 @@ from . import cli
 from .params import project
 from meltano.core.config_service import ConfigService
 from meltano.core.plugin import Plugin, PluginType
+from meltano.core.plugin_invoker import invoker_factory
 from meltano.core.plugin.error import PluginExecutionError
-from meltano.core.plugin_invoker import PluginInvoker
 from meltano.core.plugin.singer.catalog import (
     visit,
     parse_select_pattern,
@@ -80,7 +80,7 @@ def add(project, extractor, entities_filter, attributes_filter, exclude=False):
 def show(project, extractor, entities_filter, attributes_filter, show_all=False):
     config = ConfigService(project)
     extractor = config.get_plugin(extractor, plugin_type=PluginType.EXTRACTORS)
-    invoker = PluginInvoker(project, extractor)
+    invoker = invoker_factory(project, extractor)
     pattern = f"{entities_filter}.{attributes_filter}"
 
     list_all = ListSelectedExecutor()

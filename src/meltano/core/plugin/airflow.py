@@ -8,8 +8,9 @@ from . import Plugin, PluginType
 
 from meltano.core.behavior.hookable import hook
 from meltano.core.plugin.config_service import PluginConfigService
+from meltano.core.plugin_invoker import invoker_factory, PluginInvoker
 from meltano.core.venv_service import VenvService
-from meltano.core.plugin_invoker import PluginInvoker
+from meltano.core.utils import nest
 
 
 class Airflow(Plugin):
@@ -18,19 +19,17 @@ class Airflow(Plugin):
     def __init__(self, *args, **kwargs):
         super().__init__(self.__class__.__plugin_type__, *args, **kwargs)
 
+    def invoker(self, project, *args, **kwargs):
+        return AirflowInvoker(project, self, *args,
+                              run_dir=self.home(project),
+                              **kwargs)
+
     @property
     def config_files(self):
         return {"config": "airflow.cfg"}
 
-    @classmethod
-    def home(cls, project):
+    def home(self, project):
         return project.root_dir("orchestrate")
-
-    @hook("before_prepare")
-    def set_run_dir(self, invoker, *args):
-        home = self.home(invoker.project)
-        os.environ["AIRFLOW_HOME"] = str(home)
-        invoker.config_service.run_dir = home
 
     @hook("before_install")
     def setup_env(self, project, *args):
@@ -46,8 +45,7 @@ class Airflow(Plugin):
 
         # create the database directory
         project.run_dir(self.name)
-
-        invoker = PluginInvoker(project, self, config_service=plugin_config_service)
+        invoker = invoker_factory(project, self, config_service=plugin_config_service)
 
         airflow_cfg_path = plugin_config_service.run_dir.joinpath("airflow.cfg")
         stub_path = plugin_config_service.config_dir.joinpath("airflow.cfg")
@@ -84,3 +82,18 @@ class Airflow(Plugin):
         )
         handle.wait()
         logging.debug(f"Completed `airflow initdb`")
+
+
+class AirflowInvoker(PluginInvoker):
+    def Popen_options(self):
+        env = os.environ.copy()
+        venv_dir = self.project.venvs_dir(self.plugin.type, self.plugin.name)
+        env["PATH"] = os.pathsep.join([str(venv_dir.joinpath("bin")), env["PATH"]])
+        env["VIRTUAL_ENV"] = str(venv_dir)
+        env["AIRFLOW_HOME"] = str(self.plugin.home(self.project))
+
+        options = super().Popen_options()
+        options_env = nest(options, 'env')
+        options_env.update(env)
+
+        return options

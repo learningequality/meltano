@@ -1,5 +1,6 @@
 from meltano.core.behavior.hookable import HookObject, hook
 from meltano.core.plugin import Plugin, PluginType
+from meltano.core.plugin_invoker import PluginInvoker
 
 
 class DbtPlugin(Plugin, HookObject):
@@ -8,10 +9,10 @@ class DbtPlugin(Plugin, HookObject):
     def __init__(self, *args, **kwargs):
         super().__init__(self.__class__.__plugin_type__, *args, **kwargs)
 
-    @hook("before_invoke")
-    def set_working_dir(self, invoker, *args):
-        import pdb; pdb.set_trace()
-        invoker.config_service.run_dir = invoker.project.root_dir("transform")
+    def invoker(self, project, *args, **kwargs):
+        return DbtInvoker(project, self, *args,
+                          run_dir=project.root_dir("transform"),
+                          **kwargs)
 
 
 class DbtTransformPlugin(Plugin, HookObject):
@@ -19,3 +20,11 @@ class DbtTransformPlugin(Plugin, HookObject):
 
     def __init__(self, *args, **kwargs):
         super().__init__(self.__class__.__plugin_type__, *args, **kwargs)
+
+
+class DbtInvoker(PluginInvoker):
+    def Popen_options(self):
+        options = super().Popen_options()
+        options["cwd"] = str(self.project.root_dir("transform"))
+
+        return options

@@ -84,6 +84,10 @@ class Plugin(HookObject):
 
         return canonical
 
+    def invoker(self, project, *args, **kwargs):
+        "Override to have a specialize PluginInvoker class"
+        pass
+
     def exec_args(self, files: Dict):
         return []
 
@@ -116,3 +120,6 @@ class Plugin(HookObject):
 
     def __eq__(self, other):
         return self.name == other.name and self.type == other.type
+
+    def __repr__(self):
+        return f"<Plugin name={self.name} type={self.type}>"

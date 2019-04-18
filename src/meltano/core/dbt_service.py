@@ -3,13 +3,15 @@ import logging
 
 from .venv_service import VenvService
 from .plugin import PluginType
+from .config_service import ConfigService
+from .plugin_invoker import invoker_factory
 
 
 class DbtService:
     def __init__(self, project):
         self.project = project
-        self._plugin = ConfigService(project).get_plugin("dbt", PluginType=TRANSFORMERS)
-        self.invoker = PluginInvoker(self._plugin)
+        self._plugin = ConfigService(project).get_plugin("dbt", PluginType.TRANSFORMERS)
+        self.invoker = invoker_factory(project, self._plugin)
         self.profile_dir = f"{self.project.root}/transform/profile/"
 
     @property
@@ -27,9 +29,6 @@ class DbtService:
         handle.wait()
 
         return handle
-
-    def cwd(self, project):
-        return project.root_dir("transform")
 
     def deps(self):
         handle = self.invoker.invoke("deps")
