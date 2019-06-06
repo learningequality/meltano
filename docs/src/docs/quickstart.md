@@ -111,7 +111,7 @@ Once Airflow is installed, create your first test schedule using the ELT you ran
 $ meltano schedule [NEW_SCHEDULE_NAME] [YOUR_TAP] [YOUR_TARGET] [INTERVAL]
 
 #Example
-$ meltano schedule meltano_carbon__sqlite tap-carbon-intensity target-sqlite @daily
+$ meltano schedule carbon__sqlite tap-carbon-intensity target-sqlite @daily
 ```
 
 To check that your scheduling was successful, run the following command:
