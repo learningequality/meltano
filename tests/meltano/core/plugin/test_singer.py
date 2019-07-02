@@ -238,7 +238,8 @@ CATALOG = """
             "code"
           ],
           "metadata": {
-            "inclusion": "available"
+            "inclusion": "available",
+            "selected-by-default": true
           }
         },
         {
@@ -612,12 +613,9 @@ class TestCatalogSelectVisitor(TestLegacyCatalogSelectVisitor):
                 "CATALOG",
                 {
                     "id",
+                    "code",
                     "balance",
                     "created_at",
-                    "active",
-                    "payload",
-                    "payload.content",
-                    "payload.hash",
                 },
             ),
             (
@@ -638,9 +636,10 @@ class TestCatalogSelectVisitor(TestLegacyCatalogSelectVisitor):
         indirect=["catalog"],
     )
     def test_select_negated(self, catalog, attrs):
-        selector = SelectExecutor(["*.*", "!entities.code", "!entities.name"])
+        selector = SelectExecutor(["entities.balance", "!entities.name"])
         visit(catalog, selector)
 
+        import pdb; pdb.set_trace()
         lister = ListSelectedExecutor()
         visit(catalog, lister)
 

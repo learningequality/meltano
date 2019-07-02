@@ -54,6 +54,7 @@ class SelectionType(str, Enum):
     SELECTED = "selected"
     EXCLUDED = "excluded"
     AUTOMATIC = "automatic"
+    DEFAULT = "default"
 
     def __bool__(self):
         return self is not self.__class__.EXCLUDED
@@ -65,7 +66,18 @@ class SelectionType(str, Enum):
         if self is SelectionType.AUTOMATIC or other is SelectionType.AUTOMATIC:
             return SelectionType.AUTOMATIC
 
-        return SelectionType.SELECTED
+        if self is SelectionType.SELECTED or other is SelectionType.SELECTED:
+            return SelectionType.SELECTED
+
+        return SelectionType.DEFAULT
+
+
+class Inclusion(namedtuple("_Inclusion", ("included excluded"))):
+    def __bool__(self):
+        return self.included and not self.excluded
+
+    def indefinite(self):
+        return not self.included and not self.excluded
 
 
 class CatalogExecutor:
@@ -98,6 +110,17 @@ class CatalogExecutor:
         return self.execute(node_type, node, path)
 
 
+class ResetExecutor(CatalogExecutor):
+    def stream_node(self, node, path):
+        del node["selected"]
+
+    def stream_metadata_node(self, node, path):
+        del node["metadata"]["selected"]
+
+    def property_metadata_node(self, node, path):
+        del node["metadata"]["selected"]
+
+
 class SelectExecutor(CatalogExecutor):
     def __init__(self, patterns: List[str]):
         self._stream = None
@@ -112,10 +135,10 @@ class SelectExecutor(CatalogExecutor):
         included = any(fnmatch(value, pattern) for pattern in include)
         excluded = any(fnmatch(value, pattern) for pattern in exclude)
 
-        return included and not excluded
+        return Inclusion(included, excluded)
 
     def update_node_selection(self, node, path: str, selected: bool):
-        node["selected"] = selected
+        node["selected"] = bool(selected)
         if selected:
             logging.debug(f"{path} has been selected.")
         else:
@@ -175,7 +198,9 @@ class SelectExecutor(CatalogExecutor):
     def stream_metadata_node(self, node, path):
         metadata = node["metadata"]
         selected = self.stream_match_patterns(self.current_stream)
-        self.update_node_selection(metadata, path, selected)
+
+        if not selected.indefinite():
+            self.update_node_selection(metadata, path, selected)
 
     def property_node(self, node, path):
         breadcrumb_idx = path.index("properties")
@@ -197,7 +222,8 @@ class SelectExecutor(CatalogExecutor):
         property_path = ".".join(node["breadcrumb"])
         prop = f"{self.current_stream}.{path_property(property_path)}"
         selected = self.property_match_patterns(prop)
-        self.update_node_selection(node["metadata"], path, selected)
+        if not selected.indefinite():
+            self.update_node_selection(node["metadata"], path, selected)
 
 
 class ListExecutor(CatalogExecutor):
@@ -248,8 +274,11 @@ class ListSelectedExecutor(CatalogExecutor):
             if metadata.get("inclusion") == "automatic":
                 return SelectionType.AUTOMATIC
 
-            if metadata.get("selected", False):
+            if metadata.get("selected"):
                 return SelectionType.SELECTED
+
+            if metadata.get("selected-by-default"):
+                return SelectionType.DEFAULT
 
             return SelectionType.EXCLUDED
         except KeyError:
