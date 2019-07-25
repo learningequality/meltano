@@ -4,7 +4,6 @@ include LICENSE
 
 graft src
 graft tests
-graft docs
 
 global-exclude __pycache__
 global-exclude *.py[co]
