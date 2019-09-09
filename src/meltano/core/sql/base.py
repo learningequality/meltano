@@ -233,15 +233,8 @@ class MeltanoTable(MeltanoBase):
 
     def __setattr__(self, name, value):
         if name == "sql_table_name":
-            if value is not None:
-                try:
-                    schema, name = value.split(".")
-                    self._attributes["schema"] = schema
-                    self._attributes["sql_table_name"] = name
-                except ValueError:
-                    self._attributes["schema"] = None
-                    self._attributes["sql_table_name"] = value
-        elif name in ["name", "schema", "source_name"]:
+            self._attributes["sql_table_name"] = name
+        elif name in ["name", "source_name"]:
             self._attributes[name] = value
         else:
             super(MeltanoTable, self).__setattr__(name, value)
@@ -654,16 +647,11 @@ class MeltanoQuery(MeltanoBase):
     the attributes used in the group by, etc
     """
 
-    def __init__(self, definition: Dict, design_helper, schema: str = None) -> None:
+    def __init__(self, definition: Dict, design_helper) -> None:
         self.design_helper = design_helper
 
         # The Meltano Design this Query has been built for
         self.design = MeltanoDesign(design_helper.design)
-
-        # The schema used at run time.
-        # It is used in order to dynamically lookup the tables at that schema
-        #  if it is not None
-        self.schema = schema
 
         # A collection of all tables that are defined in the Query
         #  with the Columns, Timeframes and Aggregates defined in the Query
@@ -1088,12 +1076,10 @@ class MeltanoQuery(MeltanoBase):
         # Add a Limit (by default 50)
         no_join_query = no_join_query.limit(self.limit or 50)
 
-        final_query = self.add_schema_to_query(str(no_join_query))
+        if len(no_join_query):
+            no_join_query += ";"
 
-        if len(final_query) > 0:
-            final_query = final_query + ";"
-
-        return (final_query, query_attributes, aggregate_columns)
+        return (no_join_query, query_attributes, aggregate_columns)
 
     def hda_query(self) -> Tuple:
         """
@@ -1360,50 +1346,7 @@ class MeltanoQuery(MeltanoBase):
                 field = Field(attr, table=results_pika_table)
                 hda_query = hda_query.orderby(field, order=order)
 
-        final_query = self.add_schema_to_query(str(hda_query))
+        if len(hda_query):
+            hda_query += ";"
 
-        if len(final_query) > 0:
-            final_query = final_query + ";"
-
-        return (final_query, query_attributes, aggregate_columns)
-
-    def add_schema_to_query(self, query: str) -> str:
-        """
-        This is a temporary solution to address an issue in the way pypika
-        validates join conditions.
-
-        if you have a schema and an alias, the following SQL is perfectly fine:
-            FROM "analytics"."table1" "table1"
-            JOIN "analytics"."table2" "table2"
-              ON "table1"."id1"="table2"."id2"
-
-        But unfortunately, pypika considers that as not valid:
-            pypika.utils.JoinException: Invalid join criterion.
-            One field is required from the joined item and another from the
-                selected table or an existing join.
-            Found ["table1" "table1", "table2" "table2"]
-
-        Until they allow for "join .. on" clauses to be able to use the alias
-          of the tables, we have to construct the query without a schema and
-          then add the schema by replacing the table name with schema.table
-          Pretty ugly but the best we got at the moment.
-        """
-        if self.schema is None or self.schema == "":
-            return query
-
-        schema_query = query
-        for join in self.join_order:
-            table = next((t for t in self.tables if t.name == join["table"]), None)
-
-            if join["on"] is None:
-                schema_query = schema_query.replace(
-                    f'FROM "{table.sql_table_name}"',
-                    f'FROM "{self.schema}"."{table.sql_table_name}"',
-                )
-            else:
-                schema_query = schema_query.replace(
-                    f'JOIN "{table.sql_table_name}"',
-                    f'JOIN "{self.schema}"."{table.sql_table_name}"',
-                )
-
-        return schema_query
+        return (hda_query, query_attributes, aggregate_columns)
