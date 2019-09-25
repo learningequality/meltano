@@ -56,6 +56,8 @@ extractors:
     namespace: google-analytics
     docs: 'http://meltano.com/docs/plugins.html#google-analytics'
     pip_url: 'git+https://gitlab.com/meltano/tap-google-analytics.git'
+    settings_group_validation:
+      - ['key_file_location', 'view_id', 'start_date']
     settings:
       - name: key_file_location
         env: GOOGLE_ANALYTICS_API_CLIENT_SECRETS
