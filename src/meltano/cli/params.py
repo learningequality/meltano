@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 from meltano.core.project import Project
-from meltano.core.utils import pop_all
+from meltano.core.utils import pop_all, truthy
 from meltano.core.migration_service import MigrationService
 from meltano.core.db import project_engine
 
@@ -47,7 +47,7 @@ class project:
             # register the system database connection
             engine, _ = project_engine(project, engine_uri, default=True)
 
-            if self.migrate:
+            if truthy(os.getenv("MELTANO_MIGRATE", self.migrate)):
                 migration_service = MigrationService(engine)
                 migration_service.upgrade()
                 migration_service.seed(project)

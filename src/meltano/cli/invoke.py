@@ -1,6 +1,7 @@
 import click
 import sys
 import logging
+import os
 from . import cli
 from .params import project
 
@@ -22,6 +23,15 @@ def invoke(project, plugin_name, plugin_args):
         config_service = ConfigService(project)
         plugin = config_service.find_plugin(plugin_name)
         service = invoker_factory(project, plugin, prepare_with_session=session)
+        config = service.plugin_config
+
+        # hack
+        schema = os.getenv("MELTANO_LOAD_SCHEMA")
+        if schema:
+            config["schema"] = schema
+            service.plugin_config = config
+            service.prepare(session)
+
         handle = service.invoke(*plugin_args)
 
         exit_code = handle.wait()

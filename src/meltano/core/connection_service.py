@@ -1,4 +1,5 @@
 import copy
+import os
 from enum import Enum
 from pathlib import Path
 
@@ -6,7 +7,7 @@ from .elt_context import ELTContext
 from .plugin_discovery_service import PluginDiscoveryService
 
 
-ANALYZE_SCHEMA = "analytics"
+ANALYZE_SCHEMA = os.getenv("MELTANO_ANALYZE_SCHEMA", "analytics")
 
 
 class DialectNotSupportedError(Exception):
