@@ -67,6 +67,12 @@ class JobLoggingService:
             # too many logs for the same job_id
             self.clean_old_logs()
 
+    def get_log(self, run_id, file_name="elt.log"):
+        log_file_path = self.run_dir(run_id, file_name)
+
+        with log_file_path.open() as f:
+            return f.read()
+
     def get_latest_log(self):
         """
         Get the contents of the most recent log for any ELT job

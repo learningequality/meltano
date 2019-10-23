@@ -34,8 +34,11 @@ from meltano.core.elt_context import ELTContextBuilder
 @click.option(
     "--job_id", envvar="MELTANO_JOB_ID", help="A custom string to identify the job."
 )
+@click.option(
+    "--run_id", envvar="MELTANO_RUN_ID", help="A unique identifier for the current job."
+)
 @project(migrate=True)
-def elt(project, extractor, loader, dry, transform, job_id):
+def elt(project, extractor, loader, dry, transform, job_id, run_id):
     """
     meltano elt EXTRACTOR_NAME LOADER_NAME
 
@@ -47,7 +50,8 @@ def elt(project, extractor, loader, dry, transform, job_id):
 
     _, Session = project_engine(project)
     job = Job(
-        job_id=job_id or f'job_{datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S.%f")}'
+        job_id=job_id or f'job_{datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S.%f")}',
+        run_id=run_id
     )
 
     try:

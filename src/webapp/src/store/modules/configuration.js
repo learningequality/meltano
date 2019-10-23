@@ -122,7 +122,7 @@ const actions = {
       })
   },
 
-  getJobLog(_, jobId) {
+  getJobLog(_, jobId, runId) {
     return orchestrationsApi.getJobLog({ jobId })
   },
 

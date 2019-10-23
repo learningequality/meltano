@@ -77,12 +77,17 @@ def job_log() -> Response:
     project = Project.find()
     request_payload = request.get_json()
     job_id = request_payload.get("job_id")
+    run_id = request_payload.get("run_id")
 
-    if job_id:
+    if job_id and run_id:
         log_service = JobLoggingService(project, logs_dir=project.job_dir(job_id))
-        log = log_service.get_latest_log()
+        log = log_service.get_log(run_id)
 
-        return jsonify({"job_id": job_id, "log": log})
+        return jsonify({
+            "job_id": job_id,
+            "run_id": run_id,
+            "log": log
+        })
     else:
         return jsonify({"error": True, "code": "job/log: No job_id provided"}), 500
 
@@ -91,9 +96,10 @@ def job_log() -> Response:
 def run():
     project = Project.find()
     schedule_payload = request.get_json()
-    job_id = run_elt(project, schedule_payload)
 
-    return jsonify({"job_id": job_id}), 202
+    job_id, run_id = run_elt(project, schedule_payload)
+
+    return jsonify({"job_id": job_id, "run_id": run_id}), 202
 
 
 @orchestrationsBP.route("/get/configuration", methods=["POST"])
