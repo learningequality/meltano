@@ -2,6 +2,7 @@ import Router from 'vue-router'
 import Vue from 'vue'
 
 import { Service } from 'axios-middleware'
+import { VuePlugin } from 'vuera'
 import axios from 'axios'
 
 import App from './App'
@@ -19,6 +20,9 @@ Vue.config.productionTip = false
 
 Vue.use(FontAwesome)
 Vue.use(Router)
+
+// React-in-Vue setup
+Vue.use(VuePlugin)
 
 // Toast setup
 setupToasted()

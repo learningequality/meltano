@@ -45,5 +45,8 @@
       "vue-cli-service lint",
       "git add"
     ]
+  },
+  "dependencies": {
+    "vuera": "^0.2.6"
   }
 }

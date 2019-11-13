@@ -8340,6 +8340,11 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
+vuera@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/vuera/-/vuera-0.2.6.tgz#1252c7c11cd7467ddd552124b7bf3bee50d56382"
+  integrity sha512-yEV9vVRlgTzyNbxCt31PrbchNegAPI+65Buz4xrDVauVIGAWDCs69JMJzx6I6JMxlUAM6p5HDAE4OBoh/mwaUA==
+
 watchpack@^1.5.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/watchpack/-/watchpack-1.6.0.tgz#4bc12c2ebe8aa277a71f1d3f14d685c7b446cd00"
