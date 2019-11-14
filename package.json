@@ -47,6 +47,9 @@
     ]
   },
   "dependencies": {
+    "angular": "^1.5.11",
+    "angular2react": "^3.0.2",
+    "prop-types": "^15.7.2",
     "vuera": "^0.2.6"
   }
 }

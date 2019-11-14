@@ -11,18 +11,20 @@ import FatalError from '@/middleware/fatalError'
 import FontAwesome from '@/font-awesome'
 import flaskContext from '@/flask'
 import setupAnalytics from '@/setupAnalytics'
+import setupRedash from '@/redash/setupRedash'
 import setupToasted from '@/setupToasted'
 import router from './router'
 import store from './store'
 import Upgrade from '@/middleware/upgrade'
 
-Vue.config.productionTip = false
+// Redash setup (Angular, React, React-in-Vue setup)
+Vue.use(VuePlugin)
+setupRedash()
 
+// Vue setup
+Vue.config.productionTip = false
 Vue.use(FontAwesome)
 Vue.use(Router)
-
-// React-in-Vue setup
-Vue.use(VuePlugin)
 
 // Toast setup
 setupToasted()
