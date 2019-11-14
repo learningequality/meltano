@@ -7,7 +7,7 @@ import Chart from '@/components/analyze/Chart'
 import Dropdown from '@/components/generic/Dropdown'
 import NewDashboardModal from '@/components/dashboards/NewDashboardModal'
 import QueryFilters from '@/components/analyze/QueryFilters'
-import RedashQueryContainer from '@/redash/RedashQueryContainer'
+import RedashQueryContainer from '@/redash/meltano/RedashQueryContainer'
 import ResultTable from '@/components/analyze/ResultTable'
 import utils from '@/utils/utils'
 
@@ -920,7 +920,9 @@ export default {
           </div>
 
           <!-- Temp React Test -->
-          <redash-query-container></redash-query-container>
+          <div ng-app="app-design">
+            <redash-query-container></redash-query-container>
+          </div>
 
           <hr />
 

@@ -2,8 +2,8 @@ import React, { useMemo, useEffect } from 'react'
 import moment from 'moment'
 import PropTypes from 'prop-types'
 import { react2angular } from 'react2angular'
-import { Moment } from '@/redash/components/proptypes'
-import useForceUpdate from '@/redash/lib/hooks/useForceUpdate'
+import { Moment } from '@/redash/app/components/proptypes'
+import useForceUpdate from '@/redash/app/lib/hooks/useForceUpdate'
 
 export function Timer({ from }) {
   const startTime = useMemo(() => moment(from).valueOf(), [from])
