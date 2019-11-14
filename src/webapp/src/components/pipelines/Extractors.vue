@@ -4,14 +4,11 @@ import { mapGetters, mapState } from 'vuex'
 import ConnectorLogo from '@/components/generic/ConnectorLogo'
 import SpeedRunIcon from '@/components/pipelines/SpeedRunIcon'
 
-import ReactTest from '@/react/ReactTest'
-
 export default {
   name: 'Extractors',
   components: {
     ConnectorLogo,
-    SpeedRunIcon,
-    'react-test': ReactTest
+    SpeedRunIcon
   },
   data: () => ({
     speedRunExtractor: 'tap-carbon-intensity'
@@ -37,9 +34,6 @@ export default {
 
 <template>
   <div>
-    <!-- Temp React Test -->
-    <react-test></react-test>
-
     <div class="columns">
       <div class="column is-three-fifths is-offset-one-fifth">
         <div class="content has-text-centered">

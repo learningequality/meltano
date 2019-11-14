@@ -7,6 +7,7 @@ import Chart from '@/components/analyze/Chart'
 import Dropdown from '@/components/generic/Dropdown'
 import NewDashboardModal from '@/components/dashboards/NewDashboardModal'
 import QueryFilters from '@/components/analyze/QueryFilters'
+import ReactTest from '@/react/ReactTest'
 import ResultTable from '@/components/analyze/ResultTable'
 import utils from '@/utils/utils'
 
@@ -20,6 +21,7 @@ export default {
     Dropdown,
     NewDashboardModal,
     QueryFilters,
+    'react-test': ReactTest,
     ResultTable
   },
   data() {
@@ -916,6 +918,10 @@ export default {
               </div>
             </div>
           </div>
+
+          <!-- Temp React Test -->
+          <react-test></react-test>
+          <hr />
 
           <!-- charts tab -->
           <div>
