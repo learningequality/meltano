@@ -5,3 +5,4 @@ from .utils import (
 )
 from .output_logger import OutputLogger
 from .job_logging_service import JobLoggingService, MissingJobLogException
+from .meltano_ui_logging_service import MeltanoUILoggingService, MissingLogException

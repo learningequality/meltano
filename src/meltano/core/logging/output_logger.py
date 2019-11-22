@@ -3,6 +3,7 @@ import functools
 import logging
 import importlib
 import sys
+import os
 
 from .utils import remove_ansi_escape_sequences
 
@@ -28,18 +29,18 @@ class OutputLogger(object):
      even if it is not specified by the logger of a particular module.
     """
 
-    def __init__(self, file):
+    def __init__(self, file, silence_output=False):
         # Don't append, just log the last run for the same job_id
         self.file = file
         self.stdout = sys.stdout
         self.stderr = sys.stderr
-
         self.log_handlers = logging.getLogger().handlers
+        self.silence_output = silence_output
 
     def __enter__(self):
         # assign the Tee class to stdout and stderr so that everything pass through it
-        sys.stdout = Tee(self.file, self.stdout)
-        sys.stderr = Tee(self.file, self.stderr)
+        sys.stdout = Tee(self.file, self.stdout, self.silence_output)
+        sys.stderr = Tee(self.file, self.stderr, self.silence_output)
 
         stdlog = logging.StreamHandler(sys.stderr)
         logging.getLogger().handlers = [stdlog]
@@ -69,16 +70,19 @@ class Tee(object):
      and then also write it to the stream.
     """
 
-    def __init__(self, file, stream):
+    def __init__(self, file, stream, silence_output=False):
         self.file = file
         self.stream = stream
+        self.silence_output = silence_output
 
     def write(self, data):
-        self.stream.write(data)
+        if not self.silence_output:
+            self.stream.write(data)
         self.file.write(remove_ansi_escape_sequences(data))
         # always flush the file to keep it up to date with the stream
         self.file.flush()
 
     def flush(self):
-        self.stream.flush()
+        if not self.silence_output:
+            self.stream.flush()
         self.file.flush()

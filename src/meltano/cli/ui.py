@@ -11,6 +11,7 @@ from meltano.core.db import project_engine
 from meltano.core.tracking import GoogleAnalyticsTracker
 from meltano.core.utils import truthy
 from meltano.core.migration_service import MigrationService
+from meltano.core.logging import OutputLogger, MeltanoUILoggingService
 from meltano.api.workers import (
     MeltanoCompilerWorker,
     AirflowWorker,
@@ -65,35 +66,40 @@ def ui(project, reload, bind_port, bind):
     # TODO: remove when running on Python 3.8
     asyncio.get_child_watcher()
 
-    workers = []
-    if not truthy(os.getenv("MELTANO_DISABLE_AIRFLOW", False)):
-        workers.append(AirflowWorker(project))
+    ui_logging_service = MeltanoUILoggingService(project)
+    with ui_logging_service.create_log() as log_file, OutputLogger(
+        log_file, silence_output=True
+    ):
 
-    workers.append(MeltanoCompilerWorker(project))
+        workers = []
+        if not truthy(os.getenv("MELTANO_DISABLE_AIRFLOW", False)):
+            workers.append(AirflowWorker(project))
 
-    # we need to whitelist the loaders here because not
-    # all the loaders support dbt in the first place
-    dbt_docs_loader = os.getenv("MELTANO_DBT_DOCS_LOADER", "target-postgres")
-    if dbt_docs_loader:
-        workers.append(DbtWorker(project, dbt_docs_loader, loop=loop))
-    else:
-        logging.info(
-            "No loader enabled for dbt docs generation, set the MELTANO_DBT_DOCS_LOADER variable to enable one."
+        workers.append(MeltanoCompilerWorker(project))
+
+        # we need to whitelist the loaders here because not
+        # all the loaders support dbt in the first place
+        dbt_docs_loader = os.getenv("MELTANO_DBT_DOCS_LOADER", "target-postgres")
+        if dbt_docs_loader:
+            workers.append(DbtWorker(project, dbt_docs_loader, loop=loop))
+        else:
+            logging.info(
+                "No loader enabled for dbt docs generation, set the MELTANO_DBT_DOCS_LOADER variable to enable one."
+            )
+
+        workers.append(UIAvailableWorker("http://localhost:{bind_port}"))
+        workers.append(
+            APIWorker(
+                project,
+                f"{bind}:{bind_port}",
+                reload=reload or os.getenv("FLASK_ENV") == "development",
+            )
         )
 
-    workers.append(UIAvailableWorker("http://localhost:{bind_port}"))
-    workers.append(
-        APIWorker(
-            project,
-            f"{bind}:{bind_port}",
-            reload=reload or os.getenv("FLASK_ENV") == "development",
-        )
-    )
+        cleanup = start_workers(workers)
 
-    cleanup = start_workers(workers)
+        def handle_terminate(signal, frame):
+            cleanup()
 
-    def handle_terminate(signal, frame):
-        cleanup()
-
-    signal.signal(signal.SIGTERM, handle_terminate)
-    logger.info("All workers started.")
+        signal.signal(signal.SIGTERM, handle_terminate)
+        logger.info("All workers started.")

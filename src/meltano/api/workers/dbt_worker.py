@@ -119,7 +119,7 @@ class DbtWorker(threading.Thread):
             # This class would not have to be a Thread an thus it could simplify the
             # handling of such cases in the future
             logging.info(
-                f"Auto-generating dbt docs for in '{self.transform_dir}' for {self.loader}"
+                f"Auto-generating dbt docs in '{self.transform_dir}' for {self.loader}"
             )
             self._loop.run_until_complete(self.process(session))
         finally:
