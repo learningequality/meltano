@@ -62,9 +62,11 @@ export default {
   },
   created() {
     this.$store.dispatch('repos/getModels')
+    this.initialize(this.$route.params.slug)
   },
   methods: {
     ...mapActions('dashboards', [
+      'initialize',
       'updateCurrentDashboard',
     ]),
     closeMobileMenu() {
