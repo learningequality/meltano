@@ -1,4 +1,4 @@
-@import "bulma-preset-overrides";
+@import 'bulma-preset-overrides';
 
 /*
 ELEMENTS -------------------------------------------------------------------------------------------
@@ -6,7 +6,7 @@ Styles related to first-class elements
 */
 
 html {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif;
   background-color: $app-background-color;
 }
 
