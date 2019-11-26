@@ -14,6 +14,7 @@ export default {
   data() {
     return {
       isActiveDashboardLoading: false,
+      isInitializing: false,
       isNewDashboardModalOpen: false
     }
   },
@@ -39,6 +40,12 @@ export default {
   beforeDestroy() {
     this.$store.dispatch('dashboards/resetActiveDashboard')
     this.$store.dispatch('dashboards/resetActiveDashboardReports')
+  },
+  created() {
+    this.isInitializing = true
+    this.initialize(this.$route.params.slug).then(() => {
+      this.isInitializing = false
+    })
   },
   methods: {
     ...mapActions('dashboards', [
