@@ -124,7 +124,7 @@ export default {
     >
       <div class="navbar-start">
         <router-link
-          :to="{ name: 'dataSetup' }"
+          :to="{ name: 'schedules' }"
           :class="{ 'router-link-active': getIsSubRouteOf('/pipeline') }"
           class="navbar-item navbar-child has-text-weight-semibold"
         >

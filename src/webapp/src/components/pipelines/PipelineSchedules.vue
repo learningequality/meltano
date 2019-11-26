@@ -44,30 +44,59 @@ export default {
 
 <template>
   <div>
-    <div class="columns">
-      <div class="column is-three-fifths is-offset-one-fifth">
-        <div class="content has-text-centered">
-          <p class="level-item buttons">
-            <a class="button is-small is-static is-marginless is-borderless">
-              <span>Create a data pipeline below</span>
-            </a>
-            <span class="step-spacer">then</span>
-            <a class="button is-small is-static is-marginless is-borderless">
-              <span
-                >Click <span class="is-italic">Manual Run</span> to start data
-                collection</span
-              >
-            </a>
-          </p>
-        </div>
+    <div class="columns is-vcentered">
+      <div class="column">
+        <h2 class="title is-5">Add Dataset Connection</h2>
       </div>
     </div>
 
-    <br />
+    <div class="box">
+      <table class="table is-fullwidth is-narrow is-hoverable">
+        <thead>
+    <tr>
+      <th>
+        <span>Name</span>
+        <span
+          class="icon has-text-grey-light tooltip is-tooltip-multiline is-tooltip-right"
+          data-tooltip="The unique identifier for an ELT pipeline schedule and its settings."
+        >
+          <font-awesome-icon icon="info-circle"></font-awesome-icon>
+        </span>
+      </th>
+      <th class="has-text-centered">
+        <span>Data Source</span>
+        <span
+          class="icon has-text-grey-light tooltip is-tooltip-multiline"
+          data-tooltip="The connector for data extraction within a scheduled ELT pipeline."
+        >
+          <font-awesome-icon icon="info-circle"></font-awesome-icon>
+        </span>
+      </th>
+      <th class="has-text-centered">
+        <span>Update Interval</span>
+        <span
+          class="icon has-text-grey-light tooltip is-tooltip-multiline"
+          data-tooltip="The connector for data loading within a scheduled ELT pipeline."
+        >
+          <font-awesome-icon icon="info-circle"></font-awesome-icon>
+        </span>
+      </th>
+      <th class="has-text-right">
+        <span>Actions</span>
+      </th>
+    </tr>
+  </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+
+    </br>
 
     <div class="columns is-vcentered">
       <div class="column">
-        <h2 class="title is-5">Pipelines</h2>
+        <h2 class="title is-5">Connected Datasets</h2>
       </div>
 
       <div class="column">

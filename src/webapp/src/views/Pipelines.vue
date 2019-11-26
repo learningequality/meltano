@@ -71,84 +71,7 @@ export default {
 <template>
   <router-view-layout>
     <div class="container view-body is-fluid">
-      <div id="steps-data-setup" class="steps steps-pipelines is-small">
-        <div
-          class="step-item is-completed"
-          :class="{ 'is-active': getIsActiveStep('extractors') }"
-        >
-          <div class="step-marker">1</div>
-          <div class="step-details">
-            <button
-              class="step-title button is-interactive-navigation"
-              :class="{ 'is-active': getIsActiveStep('extractors') }"
-              @click="setStep('extractors')"
-            >
-              Extract
-            </button>
-            <p>Pull Raw Data from Source</p>
-          </div>
-        </div>
-        <div
-          class="step-item"
-          :class="{
-            'is-active': getIsActiveStep('loaders'),
-            'is-completed': getIsStepLoadersMinimallyValidated
-          }"
-        >
-          <div class="step-marker">2</div>
-          <div class="step-details">
-            <button
-              class="step-title button is-interactive-navigation"
-              :class="{ 'is-active': getIsActiveStep('loaders') }"
-              :disabled="!getIsStepLoadersMinimallyValidated"
-              @click="setStep('loaders')"
-            >
-              Load
-            </button>
-            <p>Push Raw Data to Destination</p>
-          </div>
-        </div>
-        <div
-          class="step-item"
-          :class="{
-            'is-active': getIsActiveStep('transforms'),
-            'is-completed': getIsStepTransformsMinimallyValidated
-          }"
-        >
-          <div class="step-marker">3</div>
-          <div class="step-details">
-            <button
-              class="step-title button is-interactive-navigation"
-              :class="{ 'is-active': getIsActiveStep('transforms') }"
-              :disabled="!getIsStepTransformsMinimallyValidated"
-              @click="setStep('transforms')"
-            >
-              Transform
-            </button>
-            <p>Transform Raw Data for Analytics</p>
-          </div>
-        </div>
-        <div
-          class="step-item"
-          :class="{
-            'is-active': getIsActiveStep('schedule'),
-            'is-completed': getIsStepScheduleMinimallyValidated
-          }"
-        >
-          <div class="step-marker">4</div>
-          <div class="step-details">
-            <button
-              class="step-title button is-interactive-navigation is-outlined"
-              :class="{ 'is-active': getIsActiveStep('schedules') }"
-              :disabled="!getIsStepScheduleMinimallyValidated"
-              @click="setStep('schedules')"
-            >
-              Schedule
-            </button>
-            <p>Automate Extract, Load, & Transform</p>
-          </div>
-        </div>
-
+      <div id="steps-data-setup" class="steps is-small">
         <div class="steps-content">
           <Step>
             <router-view></router-view>
@@ -163,7 +86,7 @@ export default {
 </template>
 
 <style lang="scss">
-.steps-pipelines {
-  margin-top: 2rem;
+.steps .steps-content {
+  margin-top: 0;
 }
 </style>
