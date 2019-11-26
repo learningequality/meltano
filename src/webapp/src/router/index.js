@@ -30,7 +30,7 @@ const router = new Router({
     },
     {
       path: '/',
-      redirect: '/pipeline'
+      redirect: 'pipeline/schedule'
     },
     {
       path: '/pipeline/',

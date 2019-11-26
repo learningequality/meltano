@@ -1,6 +1,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 
+import Dropdown from '@/components/generic/Dropdown'
 import ScheduleTableHead from '@/components/pipelines/ScheduleTableHead'
 
 import utils from '@/utils/utils'
@@ -8,6 +9,7 @@ import utils from '@/utils/utils'
 export default {
   name: 'PipelineSchedules',
   components: {
+    Dropdown,
     ScheduleTableHead
   },
   computed: {
@@ -53,156 +55,249 @@ export default {
     <div class="box">
       <table class="table is-fullwidth is-narrow is-hoverable">
         <thead>
-    <tr>
-      <th>
-        <span>Name</span>
-        <span
-          class="icon has-text-grey-light tooltip is-tooltip-multiline is-tooltip-right"
-          data-tooltip="The unique identifier for an ELT pipeline schedule and its settings."
-        >
-          <font-awesome-icon icon="info-circle"></font-awesome-icon>
-        </span>
-      </th>
-      <th class="has-text-centered">
-        <span>Data Source</span>
-        <span
-          class="icon has-text-grey-light tooltip is-tooltip-multiline"
-          data-tooltip="The connector for data extraction within a scheduled ELT pipeline."
-        >
-          <font-awesome-icon icon="info-circle"></font-awesome-icon>
-        </span>
-      </th>
-      <th class="has-text-centered">
-        <span>Update Interval</span>
-        <span
-          class="icon has-text-grey-light tooltip is-tooltip-multiline"
-          data-tooltip="The connector for data loading within a scheduled ELT pipeline."
-        >
-          <font-awesome-icon icon="info-circle"></font-awesome-icon>
-        </span>
-      </th>
-      <th class="has-text-right">
-        <span>Actions</span>
-      </th>
-    </tr>
-  </thead>
+          <tr>
+            <th>
+              <span>Name</span>
+              <span
+                class="icon has-text-grey-light tooltip is-tooltip-multiline is-tooltip-right"
+                data-tooltip="The unique identifier for an ELT pipeline schedule and its settings."
+              >
+                <font-awesome-icon icon="info-circle"></font-awesome-icon>
+              </span>
+            </th>
+            <th>
+              <span>Data Source</span>
+              <span
+                class="icon has-text-grey-light tooltip is-tooltip-multiline"
+                data-tooltip="The connector for data extraction within a scheduled ELT pipeline."
+              >
+                <font-awesome-icon icon="info-circle"></font-awesome-icon>
+              </span>
+            </th>
+            <th>
+              <span>Update Interval</span>
+              <span
+                class="icon has-text-grey-light tooltip is-tooltip-multiline"
+                data-tooltip="The connector for data loading within a scheduled ELT pipeline."
+              >
+                <font-awesome-icon icon="info-circle"></font-awesome-icon>
+              </span>
+            </th>
+            <th class="has-text-right">
+              <span>Actions</span>
+            </th>
+          </tr>
+        </thead>
         <tbody>
-
+          <tr>
+            <td>
+              <div class="field">
+                <div class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    placeholder="Connection Name"
+                    value="GitLab - Meltano"
+                  />
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="field">
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select>
+                      <option>GitLab</option>
+                      <option>Google Analytics</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="field">
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select>
+                      <option>Hourly</option>
+                      <option>Daily</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="has-text-right">
+              <a class="button is-success">
+                Add
+              </a>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
 
-    </br>
+    <br />
 
     <div class="columns is-vcentered">
       <div class="column">
         <h2 class="title is-5">Connected Datasets</h2>
       </div>
-
-      <div class="column">
-        <div class="field is-pulled-right">
-          <div class="control">
-            <button
-              class="button is-interactive-primary"
-              @click="goToCreatePipeline()"
-            >
-              <span>Create</span>
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div v-if="getHasPipelines" class="box">
       <table class="table is-fullwidth is-narrow is-hoverable">
-        <ScheduleTableHead has-actions has-start-date />
-
+        <thead>
+          <tr>
+            <th>
+              <span>Name</span>
+              <span
+                class="icon has-text-grey-light tooltip is-tooltip-multiline is-tooltip-right"
+                data-tooltip="The unique identifier for an ELT pipeline schedule and its settings."
+              >
+                <font-awesome-icon icon="info-circle"></font-awesome-icon>
+              </span>
+            </th>
+            <th>
+              <span>Data Source</span>
+              <span
+                class="icon has-text-grey-light tooltip is-tooltip-multiline"
+                data-tooltip="The connector for data extraction within a scheduled ELT pipeline."
+              >
+                <font-awesome-icon icon="info-circle"></font-awesome-icon>
+              </span>
+            </th>
+            <th>
+              <span>Update Interval</span>
+              <span
+                class="icon has-text-grey-light tooltip is-tooltip-multiline"
+                data-tooltip="The connector for data loading within a scheduled ELT pipeline."
+              >
+                <font-awesome-icon icon="info-circle"></font-awesome-icon>
+              </span>
+            </th>
+            <th>
+              <span>Last Updated</span>
+              <span
+                class="icon has-text-grey-light tooltip is-tooltip-multiline"
+                data-tooltip="The connector for data loading within a scheduled ELT pipeline."
+              >
+                <font-awesome-icon icon="info-circle"></font-awesome-icon>
+              </span>
+            </th>
+            <th>
+              <span>Start Date</span>
+              <span
+                class="icon has-text-grey-light tooltip is-tooltip-multiline"
+                data-tooltip="The connector for data loading within a scheduled ELT pipeline."
+              >
+                <font-awesome-icon icon="info-circle"></font-awesome-icon>
+              </span>
+            </th>
+            <th>
+              <span>Status</span>
+              <span
+                class="icon has-text-grey-light tooltip is-tooltip-multiline"
+                data-tooltip="The connector for data loading within a scheduled ELT pipeline."
+              >
+                <font-awesome-icon icon="info-circle"></font-awesome-icon>
+              </span>
+            </th>
+            <th class="has-text-right">
+              <span>Actions</span>
+            </th>
+          </tr>
+        </thead>
         <tbody>
-          <template v-for="pipeline in pipelines">
-            <tr :key="pipeline.name">
-              <td>
-                <p>{{ pipeline.name }}</p>
-              </td>
-              <td>
-                <p class="has-text-centered">{{ pipeline.extractor }}</p>
-              </td>
-              <td>
-                <p class="has-text-centered">{{ pipeline.loader }}</p>
-              </td>
-              <td>
-                <p class="has-text-centered">{{ pipeline.transform }}</p>
-              </td>
-              <td>
-                <p class="has-text-centered">
-                  <span v-if="getIsPluginInstalled('orchestrators', 'airflow')">
-                    {{ pipeline.interval }}
-                  </span>
-                  <router-link
-                    v-else
-                    class="button is-small tooltip"
-                    data-tooltip="Airflow Orchestrator must be installed for intervaled runs."
-                    :to="{ name: 'orchestration' }"
-                  >
-                    <span>{{ pipeline.interval }}</span>
-                    <span class="icon is-small has-text-warning">
-                      <font-awesome-icon
-                        icon="exclamation-triangle"
-                      ></font-awesome-icon>
-                    </span>
-                  </router-link>
-                </p>
-              </td>
-              <td>
-                <p class="has-text-centered">
-                  {{
-                    pipeline.startDate
-                      ? getFormattedDateStringYYYYMMDD(pipeline.startDate)
-                      : 'None'
-                  }}
-                </p>
-              </td>
-              <td>
-                <p class="has-text-centered">
-                  <button
-                    class="button is-outlined is-small"
-                    :class="{
-                      'tooltip is-tooltip-left': pipeline.jobId,
-                      'is-danger': pipeline.hasError
-                    }"
-                    data-tooltip="View this ELT Pipeline's last run logging status."
-                    :disabled="!pipeline.jobId"
-                    @click="goToLog(pipeline.jobId)"
-                  >
-                    {{ pipeline.isRunning ? 'Running...' : 'Log' }}
-                  </button>
-                </p>
-              </td>
-              <td>
-                <div class="buttons is-right">
-                  <a
-                    class="button is-interactive-primary is-outlined is-small tooltip is-tooltip-left"
-                    :class="{ 'is-loading': pipeline.isRunning }"
-                    data-tooltip="Run this ELT pipeline once."
-                    @click="runELT(pipeline)"
-                    >Manual Run</a
-                  >
-                  <router-link
-                    v-if="getIsPluginInstalled('orchestrators', 'airflow')"
-                    class="button is-interactive-primary is-outlined is-small tooltip is-tooltip-left"
-                    data-tooltip="Automate this ELT pipeline with orchestration."
-                    :to="{ name: 'orchestration' }"
-                    >Orchestrate</router-link
-                  >
-                  <router-link
-                    class="button is-interactive-primary is-outlined is-small tooltip is-tooltip-left"
-                    data-tooltip="Analyze associated models."
-                    :to="{ name: 'model' }"
-                    >Model</router-link
-                  >
-                </div>
-              </td>
-            </tr>
-          </template>
+          <tr>
+            <td>
+              Google Analytics - Marketing Website
+            </td>
+            <td>
+              Google Analytics
+            </td>
+            <td>
+              Weekly
+            </td>
+            <td>
+              Three days ago
+            </td>
+            <td>
+              11/1/19
+            </td>
+            <td>
+              <a class="button is-small">Log</a>
+            </td>
+            <td class="has-text-right">
+              <Dropdown
+                label="Reports"
+                button-classes="is-interactive-primary is-outlined is-small"
+                icon-open="chart-line"
+                icon-close="caret-down"
+                is-right-aligned
+                is-up
+              ></Dropdown>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Google Analytics - MAUI
+            </td>
+            <td>
+              Google Analytics
+            </td>
+            <td>
+              Daily
+            </td>
+            <td>
+              Yesterday
+            </td>
+            <td>
+              11/1/19
+            </td>
+            <td>
+              <a class="button is-small">Log</a>
+            </td>
+            <td class="has-text-right">
+              <Dropdown
+                label="Reports"
+                button-classes="is-interactive-primary is-outlined is-small"
+                icon-open="chart-line"
+                icon-close="caret-down"
+                is-right-aligned
+                is-up
+              ></Dropdown>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Google Analytics - CLI
+            </td>
+            <td>
+              Google Analytics
+            </td>
+            <td>
+              Weekly
+            </td>
+            <td>
+              Three days ago
+            </td>
+            <td>
+              11/1/19
+            </td>
+            <td>
+              <a class="button is-small">Log</a>
+            </td>
+            <td class="has-text-right">
+              <Dropdown
+                label="Reports"
+                button-classes="is-interactive-primary is-outlined is-small"
+                icon-open="chart-line"
+                icon-close="caret-down"
+                is-right-aligned
+                is-up
+              ></Dropdown>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
