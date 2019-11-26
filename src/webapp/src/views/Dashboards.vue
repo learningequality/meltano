@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       isActiveDashboardLoading: false,
-      isInitializing: false,
+      isInitializing: true,
       isNewDashboardModalOpen: false
     }
   },
