@@ -90,11 +90,7 @@ export default {
       }
     },
     close() {
-      if (this.prevRoute) {
-        this.$router.go(-1)
-      } else {
-        this.$router.push({ name: 'extractors' })
-      }
+      this.$router.go(-1)
     },
     createEditableConfiguration() {
       this.localConfiguration = Object.assign(
@@ -122,9 +118,7 @@ export default {
           })
           this.$router.push({ name: 'loaders' })
           const message = this.extractorLacksConfigSettings
-            ? `Auto Advance - No Configuration needed for ${
-                this.extractor.name
-              }`
+            ? `Auto Advance - No Configuration needed for ${this.extractor.name}`
             : `Connection Saved - ${this.extractor.name}`
           Vue.toasted.global.success(message)
         })

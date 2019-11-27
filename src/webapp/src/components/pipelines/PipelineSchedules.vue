@@ -32,7 +32,10 @@ export default {
   },
   methods: {
     goToCreatePipeline() {
-      this.$router.push({ name: 'createSchedule' })
+      this.$router.push({
+        name: 'extractorSettings',
+        params: { extractor: 'tap-gitlab' }
+      })
     },
     goToLog(jobId) {
       this.$router.push({ name: 'runLog', params: { jobId } })
@@ -127,7 +130,7 @@ export default {
               </div>
             </td>
             <td class="has-text-right">
-              <a class="button is-success">
+              <a class="button is-success" @click="goToCreatePipeline">
                 Add
               </a>
             </td>

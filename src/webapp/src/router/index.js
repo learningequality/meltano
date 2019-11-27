@@ -53,7 +53,7 @@ const router = new Router({
           path: 'extract/:extractor/configure',
           name: 'extractorSettings',
           components: {
-            default: Extractors,
+            default: PipelineSchedules,
             extractorSettings: ExtractorSettingsModal
           },
           meta: {
