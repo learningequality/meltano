@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ## 1.10.2 - (2019-12-06)
 
 ---
+- [#1330](https://gitlab.com/meltano/meltano/issues/1330) Added Terms of Service link to learn more in addition to an acknowledgment button
 
 ### Changes
 

@@ -11,6 +11,7 @@ export default {
   created() {
     this.$store.dispatch('system/check')
     this.acknowledgeAnalyticsTracking()
+    this.acknowledgeTermsOfService()
   },
   methods: {
     acknowledgeAnalyticsTracking() {
@@ -21,6 +22,15 @@ export default {
         if (!hasAcknowledgedTracking) {
           this.$toasted.global.acknowledgeAnalyticsTracking()
         }
+      }
+    },
+    acknowledgeTermsOfService() {
+      const hasAcknowledgedTermsOfService =
+        'acknowledgedTermsOfServiceVersion' in localStorage &&
+        localStorage.getItem('acknowledgedTermsOfServiceVersion') ===
+          `${this.$flask.termsOfServiceVersion}`
+      if (!hasAcknowledgedTermsOfService) {
+        this.$toasted.global.acknowledgeTermsOfService()
       }
     }
   }

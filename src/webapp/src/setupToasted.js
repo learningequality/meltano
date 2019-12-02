@@ -58,10 +58,40 @@ export default function setup() {
           }
         },
         {
-          text: 'Got it',
+          text: 'Acknowledge',
           onClick: (e, toastObject) => {
             toastObject.goAway(0)
             localStorage.setItem('hasAcknowledgedTracking', true)
+          }
+        }
+      ],
+      duration: null
+    }
+  )
+
+  // Register terms of service notification Toast.
+  Vue.toasted.register(
+    'acknowledgeTermsOfService',
+    'Meltano has an updated Terms of Service.',
+    {
+      type: 'info',
+      action: [
+        {
+          text: 'Learn more',
+          onClick: () => {
+            window.open(
+              'https://meltano.com/docs/security-and-privacy.html#security-privacy'
+            )
+          }
+        },
+        {
+          text: 'Acknowledge',
+          onClick: (e, toastObject) => {
+            toastObject.goAway(0)
+            localStorage.setItem(
+              'acknowledgedTermsOfServiceVersion',
+              Vue.prototype.$flask.termsOfServiceVersion
+            )
           }
         }
       ],
