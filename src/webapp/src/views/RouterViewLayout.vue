@@ -5,7 +5,7 @@ export default {
 </script>
 
 <template>
-  <div class="columns is-gapless">
+  <div class="columns is-gapless is-marginless">
     <section class="column is-full">
       <div class="box-transparent box is-radiusless is-shadowless">
         <slot name="default"></slot>
