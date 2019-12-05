@@ -28,10 +28,15 @@ $link: $primary; // Set to match $interactive-navigation which is assigned after
 $warning: $orange;
 $modal-background-background-color: rgba(#000000, 0.65);
 
-/* Font-- ------------------ */
+/* Font --------------------- */
 
 $family-sans-serif: 'IBM Plex Sans';
 $family-monospace: 'IBM Plex Mono';
+
+/* Footer ------------------- */
+
+$footer-background-color: transparent;
+$footer-padding: 1.25rem;
 
 /* Modal -------------------- */
 

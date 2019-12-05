@@ -1,12 +1,15 @@
 <script>
 import Breadcrumbs from '@/components/navigation/Breadcrumbs'
 import MainNav from '@/components/navigation/MainNav'
+import Footer from '@/components/generic/Footer'
 import TermsOfServiceModal from '@/components/generic/TermsOfServiceModal'
+
 export default {
   name: 'App',
   components: {
     Breadcrumbs,
     MainNav,
+    Footer,
     TermsOfServiceModal
   },
   created() {
@@ -33,6 +36,7 @@ export default {
     <main-nav />
     <Breadcrumbs />
     <router-view />
+    <Footer />
     <TermsOfServiceModal />
   </div>
 </template>

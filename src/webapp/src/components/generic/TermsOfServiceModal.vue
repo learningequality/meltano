@@ -6,7 +6,7 @@ export default {
       isActive: false
     }
   },
-  created() {
+  mounted() {
     this.tryAcknowledgeTermsOfService()
   },
   methods: {
@@ -25,6 +25,8 @@ export default {
         localStorage.getItem('hasAcknowledgedTermsOfService') === `true`
       if (!hasAcknowledgedTermsOfService) {
         this.isActive = true
+      } else {
+        this.selfDestruct()
       }
     }
   }
