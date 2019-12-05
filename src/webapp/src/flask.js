@@ -12,8 +12,6 @@ module.exports = function() {
       dbtDocsUrl: process.env.DBT_DOCS_URL,
       isSendAnonymousUsageStats: false,
       projectId: 'none',
-      // Update if we make a TOS update and require another acknowledgement for each UI user
-      termsOfServiceVersion: 1.0,
       version: 'source'
     }
   )

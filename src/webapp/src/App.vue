@@ -1,20 +1,20 @@
 <script>
 import Breadcrumbs from '@/components/navigation/Breadcrumbs'
 import MainNav from '@/components/navigation/MainNav'
-
+import TermsOfServiceModal from '@/components/generic/TermsOfServiceModal'
 export default {
   name: 'App',
   components: {
     Breadcrumbs,
-    MainNav
+    MainNav,
+    TermsOfServiceModal
   },
   created() {
     this.$store.dispatch('system/check')
-    this.acknowledgeAnalyticsTracking()
-    this.acknowledgeTermsOfService()
+    this.tryAcknowledgeAnalyticsTracking()
   },
   methods: {
-    acknowledgeAnalyticsTracking() {
+    tryAcknowledgeAnalyticsTracking() {
       if (this.$flask.isSendAnonymousUsageStats) {
         const hasAcknowledgedTracking =
           'hasAcknowledgedTracking' in localStorage &&
@@ -24,15 +24,6 @@ export default {
         }
       }
     },
-    acknowledgeTermsOfService() {
-      const hasAcknowledgedTermsOfService =
-        'acknowledgedTermsOfServiceVersion' in localStorage &&
-        localStorage.getItem('acknowledgedTermsOfServiceVersion') ===
-          `${this.$flask.termsOfServiceVersion}`
-      if (!hasAcknowledgedTermsOfService) {
-        this.$toasted.global.acknowledgeTermsOfService()
-      }
-    }
   }
 }
 </script>
@@ -42,6 +33,7 @@ export default {
     <main-nav></main-nav>
     <Breadcrumbs></Breadcrumbs>
     <router-view />
+    <TermsOfServiceModal />
   </div>
 </template>
 
