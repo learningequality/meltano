@@ -1,5 +1,4 @@
 <script>
-
 export default {
   name: 'TermsOfServiceModal',
   data() {
@@ -47,7 +46,9 @@ export default {
         </div>
       </section>
       <footer class="modal-card-foot buttons is-right">
-        <button class="button is-interactive-primary" @click="acknowledge">Acknowledge</button>
+        <button class="button is-interactive-primary" @click="acknowledge">
+          Acknowledge
+        </button>
       </footer>
     </div>
   </div>
