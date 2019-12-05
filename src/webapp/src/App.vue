@@ -30,8 +30,8 @@ export default {
 
 <template>
   <div id="app">
-    <main-nav></main-nav>
-    <Breadcrumbs></Breadcrumbs>
+    <main-nav />
+    <Breadcrumbs />
     <router-view />
     <TermsOfServiceModal />
   </div>
