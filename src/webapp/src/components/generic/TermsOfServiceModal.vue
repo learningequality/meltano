@@ -7,7 +7,11 @@ export default {
     }
   },
   mounted() {
-    this.tryAcknowledgeTermsOfService()
+    if (!window.location.hostname.includes('meltanodata.com')) {
+      this.selfDestruct()
+    } else {
+      this.tryAcknowledgeTermsOfService()
+    }
   },
   methods: {
     acknowledge() {
