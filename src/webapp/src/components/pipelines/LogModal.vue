@@ -142,7 +142,10 @@ export default {
     // TODO: test a QS implementation
     prepareAnalyzeLoader() {
       if (this.relatedPipeline) {
-        this.$store.commit('designs/setPipeline', this.relatedPipeline)
+        this.$store.commit(
+          'designs/setCurrentPipeline',
+          this.relatedPipeline.name
+        )
       }
     }
   }

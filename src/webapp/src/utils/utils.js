@@ -190,6 +190,9 @@ export default {
 
     return accountId
   },
+  storageKey(...path) {
+    return lodash.join(path, ':')
+  },
   titleCase(value) {
     return value.replace(
       /\w\S*/g,
