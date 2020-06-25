@@ -4,21 +4,14 @@
 
 import os
 import logging
+import subprocess
+import json
+
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
-from datetime import datetime, time, timedelta, MINYEAR
+from datetime import timedelta
 
-from meltano.core.schedule_service import ScheduleService
-from meltano.core.project import Project
-from meltano.core.utils import coerce_datetime
-from meltano.core.job import JobFinder
-from meltano.core.db import project_engine
-
-
-project = Project.find()
-schedule_service = ScheduleService(project)
-
-default_args = {
+DEFAULT_ARGS = {
     "owner": "airflow",
     "depends_on_past": False,
     "email_on_failure": False,
@@ -29,34 +22,37 @@ default_args = {
     "concurrency": 1,
 }
 
-engine_uri = os.getenv(
-    "MELTANO_DATABASE_URI", "sqlite:///$MELTANO_PROJECT_ROOT/.meltano/meltano.db"
+project_root = os.getenv("MELTANO_PROJECT_ROOT", os.getcwd())
+
+result = subprocess.run(
+    [".meltano/run/bin", "schedule", "list", "--format=json"],
+    cwd=project_root,
+    stdout=subprocess.PIPE,
+    universal_newlines=True,
+    check=True,
 )
-engine_uri = engine_uri.replace("$MELTANO_PROJECT_ROOT", str(project.root))
+schedules = json.loads(result.stdout)
 
-engine, Session = project_engine(project, engine_uri, default=True)
-session = Session()
+for schedule in schedules:
+    logging.info(f"Considering schedule '{schedule['name']}': {schedule}")
 
-for schedule in schedule_service.schedules():
-    if schedule.interval == "@once":
+    if not schedule["cron_interval"]:
         logging.info(
-            f"No DAG created for schedule '{schedule.name}' because its interval is set to `@once`."
+            f"No DAG created for schedule '{schedule['name']}' because its interval is set to `@once`."
         )
         continue
 
-    finder = JobFinder(schedule.name)
-    last_successful_run = finder.latest_success(session)
-    if not last_successful_run:
+    if not schedule["last_successful_run_ended_at"]:
         logging.info(
-            f"No DAG created for schedule '{schedule.name}' because it hasn't had a successful (manual) run yet."
+            f"No DAG created for schedule '{schedule['name']}' because it hasn't had a successful (manual) run yet."
         )
         continue
 
-    args = default_args.copy()
-    if schedule.start_date:
-        args["start_date"] = coerce_datetime(schedule.start_date)
+    args = DEFAULT_ARGS.copy()
+    if schedule["start_date"]:
+        args["start_date"] = schedule["start_date"]
 
-    dag_id = f"meltano_{schedule.name}"
+    dag_id = f"meltano_{schedule['name']}"
 
     # from https://airflow.apache.org/docs/stable/scheduler.html#backfill-and-catchup
     #
@@ -66,19 +62,21 @@ for schedule in schedule_service.schedules():
     # Because our extractors do not support date-window extraction, it serves no
     # purpose to enqueue date-chunked jobs for complete extraction window.
     dag = DAG(
-        dag_id, catchup=False, default_args=args, schedule_interval=schedule.interval
+        dag_id, catchup=False, default_args=args, schedule_interval=schedule["interval"]
     )
 
     elt = BashOperator(
         task_id="extract_load",
-        bash_command=f"echo $PATH; echo $VIRTUAL_ENV; cd {str(project.root)}; .meltano/run/bin elt {schedule.extractor} {schedule.loader} --job_id={schedule.name} --transform={schedule.transform}",
+        bash_command=f"cd {project_root}; .meltano/run/bin elt {' '.join(schedule['elt_args'])}",
         dag=dag,
         env={
             # inherit the current env
             **os.environ,
-            **schedule.env,
+            **schedule["env"],
         },
     )
 
     # register the dag
     globals()[dag_id] = dag
+
+    logging.info(f"DAG created for schedule '{schedule['name']}'")

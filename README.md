@@ -1,6 +1,9 @@
 # files-airflow
 
-Meltano project files for Airflow.
+Meltano project [file bundle](https://meltano.com/docs/command-line-interface.html#file-bundle) for [Airflow](https://airflow.apache.org/).
+
+Files:
+- [`orchestrate/dags/meltano.py`](./bundle/orchestrate/dags/meltano.py)
 
 ```py
 # Add Airflow orchestrator and this file bundle to your Meltano project
