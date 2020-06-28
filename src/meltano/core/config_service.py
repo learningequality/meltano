@@ -1,6 +1,7 @@
 import os
 import yaml
 import logging
+from copy import deepcopy
 from typing import Dict, List, Optional, Iterable
 
 from meltano.core.utils import nest, NotFound
@@ -19,9 +20,14 @@ class PluginAlreadyAddedException(Exception):
 class ConfigService:
     def __init__(self, project: Project):
         self.project = project
+        self.current_config = deepcopy(self.project.meltano.config)
 
     def make_meltano_secret_dir(self):
         os.makedirs(self.project.meltano_dir(), exist_ok=True)
+
+    def update_config(self):
+        with self.project.meltano_update() as meltano:
+            meltano.config = self.current_config
 
     def add_to_file(self, plugin: PluginInstall):
         plugin = plugin_factory(plugin.type, plugin.canonical())

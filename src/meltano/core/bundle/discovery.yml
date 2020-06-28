@@ -1,6 +1,12 @@
 # Increment this version number whenever the schema of discovery.yml is changed.
 # See https://www.meltano.com/docs/contributor-guide.html#discovery-yml-version for more information.
-version: 12
+version: 13
+
+settings:
+  - name: send_anonymous_usage_stats
+    kind: boolean
+    value: False
+  - name: project_id
 
 extractors:
   - name: tap-facebook

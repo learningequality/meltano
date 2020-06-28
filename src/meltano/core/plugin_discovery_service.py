@@ -9,6 +9,7 @@ from typing import Dict, Iterator, Optional
 from itertools import groupby, chain
 
 import meltano.core.bundle as bundle
+from .setting_definition import SettingDefinition
 from .behavior.versioned import Versioned, IncompatibleVersionError
 from .behavior.canonical import Canonical
 from .config_service import ConfigService
@@ -36,19 +37,19 @@ MELTANO_DISCOVERY_URL = "https://www.meltano.com/discovery.yml"
 
 # Increment this version number whenever the schema of discovery.yml is changed.
 # See https://www.meltano.com/docs/contributor-guide.html#discovery-yml-version for more information.
-VERSION = 12
+VERSION = 13
 
 
 class DiscoveryFile(Canonical):
-    def __init__(self, **attrs):
-        version = int(attrs.pop("version", 1))
-
-        super().__init__(version=version)
+    def __init__(self, version=1, settings=[], **plugins):
+        super().__init__(
+            version=int(version), settings=list(map(SettingDefinition.parse, settings))
+        )
 
         for plugin_type in PluginType:
             self[plugin_type] = []
 
-        for plugin_type, plugin_defs in attrs.items():
+        for plugin_type, plugin_defs in plugins.items():
             for plugin_def in plugin_defs:
                 plugin = Plugin(
                     plugin_type,
@@ -74,7 +75,7 @@ class PluginDiscoveryService(Versioned):
 
     @property
     def backend_version(self):
-        return int(self._discovery.version)
+        return self._discovery.version
 
     @property
     def discovery(self):
