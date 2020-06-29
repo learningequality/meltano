@@ -3,7 +3,7 @@ from unittest import mock
 from flask import url_for
 
 from meltano.core.plugin.settings_service import (
-    PluginSettingValueSource,
+    SettingValueSource,
     REDACTED_VALUE,
     Profile,
 )
@@ -28,7 +28,7 @@ class TestOrchestration:
             # but redacted in the response
             assert plugin_settings_service.get_value(session, tap, "secure") == (
                 "thisisatest",
-                PluginSettingValueSource.DB,
+                SettingValueSource.DB,
             )
             assert default_config["secure"] == REDACTED_VALUE
 
@@ -36,7 +36,7 @@ class TestOrchestration:
             # but hidden in the response
             assert plugin_settings_service.get_value(session, tap, "hidden") == (
                 42,
-                PluginSettingValueSource.DEFAULT,
+                SettingValueSource.DEFAULT,
             )
             assert "hidden" not in default_config
 
@@ -65,20 +65,20 @@ class TestOrchestration:
             # but redacted in the response
             assert plugin_settings_service.get_value(session, tap, "secure") == (
                 "newvalue",
-                PluginSettingValueSource.DB,
+                SettingValueSource.DB,
             )
             assert config["secure"] == REDACTED_VALUE
 
             # make sure the `readonly` field has not been updated
             assert plugin_settings_service.get_value(session, tap, "protected") == (
                 "iwontchange",
-                PluginSettingValueSource.DB,
+                SettingValueSource.DB,
             )
 
             # make sure the `hidden` setting is still present
             # but hidden in the response
             assert plugin_settings_service.get_value(session, tap, "hidden") == (
                 42,
-                PluginSettingValueSource.DEFAULT,
+                SettingValueSource.DEFAULT,
             )
             assert "hidden" not in config
