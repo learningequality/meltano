@@ -35,7 +35,7 @@ class PluginSettingsService:
             config_override={**self.config_override, **config_override},
         )
 
-    def _specific_service(self, session=None, plugin=None):
+    def build(self, session=None, plugin=None):
         return SpecificPluginSettingsService(
             plugin,
             *self._args,
@@ -46,60 +46,47 @@ class PluginSettingsService:
         )
 
     def profile_with_config(self, session, plugin: PluginRef, *args, **kwargs):
-        return self._specific_service(session, plugin).profile_with_config(
-            *args, **kwargs
-        )
+        return self.build(session, plugin).profile_with_config(*args, **kwargs)
 
     def profiles_with_config(self, session, plugin: PluginRef, *args, **kwargs):
-        return self._specific_service(session, plugin).profiles_with_config(
-            *args, **kwargs
-        )
+        return self.build(session, plugin).profiles_with_config(*args, **kwargs)
 
     def config_with_sources(self, session, plugin: PluginRef, *args, **kwargs):
-        return self._specific_service(session, plugin).config_with_sources(
-            *args, **kwargs
-        )
+        return self.build(session, plugin).config_with_sources(*args, **kwargs)
 
     @property
     def env(self):
-        return self._specific_service().env
+        return self.build().env
 
     def as_config(self, session, plugin: PluginRef, *args, **kwargs):
-        return self._specific_service(session, plugin).as_config(*args, **kwargs)
+        return self.build(session, plugin).as_config(*args, **kwargs)
 
     def as_env(self, session, plugin: PluginRef, *args, **kwargs):
-        return self._specific_service(session, plugin).as_env(*args, **kwargs)
+        return self.build(session, plugin).as_env(*args, **kwargs)
 
     def set(
         self, session, plugin: PluginRef, *args, store=SettingValueStore.DB, **kwargs
     ):
-        return self._specific_service(session, plugin).set(*args, **kwargs, store=store)
+        return self.build(session, plugin).set(*args, **kwargs, store=store)
 
     def unset(
         self, session, plugin: PluginRef, *args, store=SettingValueStore.DB, **kwargs
     ):
-        return self._specific_service(session, plugin).unset(
-            *args, **kwargs, store=store
-        )
+        return self.build(session, plugin).unset(*args, **kwargs, store=store)
 
     def reset(
         self, session, plugin: PluginRef, *args, store=SettingValueStore.DB, **kwargs
     ):
-        return self._specific_service(session, plugin).reset(
-            *args, **kwargs, store=store
-        )
+        return self.build(session, plugin).reset(*args, **kwargs, store=store)
 
     def get_value(self, session, plugin: PluginRef, *args, **kwargs):
-        return self._specific_service(session, plugin).get_value(*args, **kwargs)
+        return self.build(session, plugin).get_value(*args, **kwargs)
 
     def find_setting(self, plugin: PluginRef, *args, **kwargs):
-        return self._specific_service(plugin=plugin).find_setting(*args, **kwargs)
+        return self.build(plugin=plugin).find_setting(*args, **kwargs)
 
     def setting_env(self, setting_def, plugin: PluginRef):
-        return self._specific_service(plugin=plugin).setting_env(setting_def)
-
-
-11
+        return self.build(plugin=plugin).setting_env(setting_def)
 
 
 class SpecificPluginSettingsService(SettingsService):

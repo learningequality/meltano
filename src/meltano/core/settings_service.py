@@ -53,6 +53,7 @@ class SettingsService:
         plugin_discovery_service: PluginDiscoveryService = None,
         config_service: ConfigService = None,
         show_hidden=True,
+        path_prefix=[],
         env_override={},
         config_override={},
     ):
@@ -65,6 +66,8 @@ class SettingsService:
         self.config_service = config_service or ConfigService(project)
 
         self.show_hidden = show_hidden
+        self.path_prefix = path_prefix
+        self.name_prefix = ".".join([*self.path_prefix, ""])
 
         self.env_override = env_override
         self.config_override = config_override
@@ -109,13 +112,16 @@ class SettingsService:
     def config_with_sources(
         self, sources: List[SettingValueSource] = None, redacted=False
     ):
-        setting_names = [setting.name for setting in self._definitions]
+        setting_names = [setting.name for setting in self.definitions()]
 
         flat_config = flatten(self._current_config, "dot")
         setting_names.extend(flat_config.keys())
 
         config = {}
         for name in setting_names:
+            if self.name_prefix and not name.startswith(self.name_prefix):
+                continue
+
             value, source = self.get_value(name, redacted=redacted)
             if sources and source not in sources:
                 continue
@@ -132,7 +138,10 @@ class SettingsService:
     def as_env(self, sources: List[SettingValueSource] = None) -> Dict[str, str]:
         env = {}
 
-        for setting in self._definitions:
+        for setting in self.definitions():
+            if self.name_prefix and not setting.name.startswith(self.name_prefix):
+                continue
+
             value, source = self.get_value(setting.name)
             if sources and source not in sources:
                 logging.debug(f"Setting {setting.name} is not in sources: {sources}.")
@@ -149,6 +158,8 @@ class SettingsService:
     def set(self, path: List[str], value, store=SettingValueStore.MELTANO_YML):
         if isinstance(path, str):
             path = [path]
+
+        path = [*self.path_prefix, *path]
 
         name = ".".join(path)
 
@@ -185,7 +196,6 @@ class SettingsService:
                 set_at_path(config, path, value)
 
             self._update_config()
-
             return True
 
         def db_setter():
@@ -220,7 +230,16 @@ class SettingsService:
 
     def reset(self, store=SettingValueStore.MELTANO_YML):
         def meltano_yml_resetter():
-            self._current_config.clear()
+            config = self._current_config
+
+            if self.path_prefix:
+                pop_at_path(config, self.path_prefix, None)
+                for key in config.keys():
+                    if key.startswith(self.name_prefix):
+                        config.pop(key)
+            else:
+                config.clear()
+
             self._update_config()
             return True
 
@@ -228,7 +247,14 @@ class SettingsService:
             if not self.session:
                 return None
 
-            self.session.query(Setting).filter_by(namespace=self._db_namespace).delete()
+            settings = self.session.query(Setting).filter_by(
+                namespace=self._db_namespace
+            )
+            if self.name_prefix:
+                settings.filter(Setting.name.like(f"{self.name_prefix}%")).delete()
+            else:
+                settings.delete()
+
             self.session.commit()
             return True
 
@@ -244,14 +270,20 @@ class SettingsService:
 
     def find_setting(self, name: str) -> SettingDefinition:
         try:
-            return find_named(self._definitions, name)
+            return find_named(self.definitions(), name)
         except NotFound as err:
             raise SettingMissingError(name) from err
 
     def definitions(self) -> Iterable[Dict]:
-        settings = set()
-        only_visible = lambda s: s.kind != "hidden" or self.show_hidden
-        return list(filter(only_visible, self._definitions))
+        settings = []
+        for s in self._definitions:
+            if s.kind == "hidden" and not self.show_hidden:
+                continue
+            if self.name_prefix and not s.name.startswith(self.name_prefix):
+                continue
+
+            settings.append(s)
+        return settings
 
     def _current_config(self):
         return NotImplementedError
