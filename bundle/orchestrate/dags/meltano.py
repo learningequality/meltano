@@ -42,12 +42,6 @@ for schedule in schedules:
         )
         continue
 
-    if not schedule["last_successful_run_ended_at"]:
-        logging.info(
-            f"No DAG created for schedule '{schedule['name']}' because it hasn't had a successful (manual) run yet."
-        )
-        continue
-
     args = DEFAULT_ARGS.copy()
     if schedule["start_date"]:
         args["start_date"] = schedule["start_date"]
