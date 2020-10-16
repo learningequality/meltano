@@ -1,7 +1,8 @@
 # Changelog
 
-- [#3](https://gitlab.com/meltano/files-airflow/-/issues/3) file-exists check for meltano executable
+## 0.5
 
+- [#3](https://gitlab.com/meltano/files-airflow/-/issues/3) Fall back on expecting `meltano` to be in PATH if symlink could not be found at `.meltano/run/bin`
 
 ## 0.4
 
