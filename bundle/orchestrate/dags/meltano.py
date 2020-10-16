@@ -10,6 +10,11 @@ import json
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from datetime import timedelta
+from pathlib import Path
+
+
+logger = logging.getLogger(__name__)
+
 
 DEFAULT_ARGS = {
     "owner": "airflow",
@@ -24,8 +29,15 @@ DEFAULT_ARGS = {
 
 project_root = os.getenv("MELTANO_PROJECT_ROOT", os.getcwd())
 
+meltano_bin = ".meltano/run/bin"
+
+if not Path(project_root).joinpath(meltano_bin).exists():
+    logger.warning(f"A symlink to the 'meltano' executable could not be found at '{meltano_bin}'. Falling back on expecting it to be in the PATH instead.")
+    meltano_bin = "meltano"
+
+
 result = subprocess.run(
-    [".meltano/run/bin", "schedule", "list", "--format=json"],
+    [meltano_bin, "schedule", "list", "--format=json"],
     cwd=project_root,
     stdout=subprocess.PIPE,
     universal_newlines=True,
@@ -34,10 +46,10 @@ result = subprocess.run(
 schedules = json.loads(result.stdout)
 
 for schedule in schedules:
-    logging.info(f"Considering schedule '{schedule['name']}': {schedule}")
+    logger.info(f"Considering schedule '{schedule['name']}': {schedule}")
 
     if not schedule["cron_interval"]:
-        logging.info(
+        logger.info(
             f"No DAG created for schedule '{schedule['name']}' because its interval is set to `@once`."
         )
         continue
@@ -61,7 +73,7 @@ for schedule in schedules:
 
     elt = BashOperator(
         task_id="extract_load",
-        bash_command=f"cd {project_root}; .meltano/run/bin elt {' '.join(schedule['elt_args'])}",
+        bash_command=f"cd {project_root}; {meltano_bin} elt {' '.join(schedule['elt_args'])}",
         dag=dag,
         env={
             # inherit the current env
@@ -73,4 +85,4 @@ for schedule in schedules:
     # register the dag
     globals()[dag_id] = dag
 
-    logging.info(f"DAG created for schedule '{schedule['name']}'")
+    logger.info(f"DAG created for schedule '{schedule['name']}'")
