@@ -1,5 +1,8 @@
 # Changelog
 
+- [#3](https://gitlab.com/meltano/files-airflow/-/issues/3) file-exists check for meltano executable
+
+
 ## 0.4
 
 - [#2](https://gitlab.com/meltano/files-airflow/-/issues/2) Don't run `meltano elt` again when previous run lasts longer than the interval and hasn't completed yet
