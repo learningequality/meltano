@@ -32,7 +32,9 @@ project_root = os.getenv("MELTANO_PROJECT_ROOT", os.getcwd())
 meltano_bin = ".meltano/run/bin"
 
 if not Path(project_root).joinpath(meltano_bin).exists():
-    logger.warning(f"A symlink to the 'meltano' executable could not be found at '{meltano_bin}'. Falling back on expecting it to be in the PATH instead.")
+    logger.warning(
+        f"A symlink to the 'meltano' executable could not be found at '{meltano_bin}'. Falling back on expecting it to be in the PATH instead."
+    )
     meltano_bin = "meltano"
 
 
@@ -68,18 +70,17 @@ for schedule in schedules:
     # Because our extractors do not support date-window extraction, it serves no
     # purpose to enqueue date-chunked jobs for complete extraction window.
     dag = DAG(
-        dag_id, catchup=False, default_args=args, schedule_interval=schedule["interval"], max_active_runs=1
+        dag_id,
+        catchup=False,
+        default_args=args,
+        schedule_interval=schedule["interval"],
+        max_active_runs=1,
     )
 
     elt = BashOperator(
         task_id="extract_load",
-        bash_command=f"cd {project_root}; {meltano_bin} elt {' '.join(schedule['elt_args'])}",
+        bash_command=f"cd {project_root}; {meltano_bin} schedule run {schedule['name']}",
         dag=dag,
-        env={
-            # inherit the current env
-            **os.environ,
-            **schedule["env"],
-        },
     )
 
     # register the dag
