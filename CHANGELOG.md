@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6
+
+- [#4](https://gitlab.com/meltano/files-airflow/-/issues/4) Use new `meltano schedule run <name>` command
+
 ## 0.5
 
 - [#3](https://gitlab.com/meltano/files-airflow/-/issues/3) Fall back on expecting `meltano` to be in PATH if symlink could not be found at `.meltano/run/bin`
