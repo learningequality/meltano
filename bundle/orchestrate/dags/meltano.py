@@ -101,4 +101,3 @@ for schedule in schedules:
     globals()[dag_id] = dag
 
     logger.info(f"DAG created for schedule '{schedule['name']}'")
-git
