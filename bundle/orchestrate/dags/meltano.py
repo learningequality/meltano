@@ -65,11 +65,11 @@ for schedule in schedules:
     dag_id = f"meltano_{schedule['name']}"
 
     tags = DEFAULT_TAGS.copy()
-    if schedule["extractor"]:
+    if schedule.get("extractor") is not None:
         tags.append(schedule["extractor"])
-    if schedule["loader"]:
+    if schedule.get("loader") is not None:
         tags.append(schedule["loader"])
-    if schedule["transform"]:
+    if schedule.get("transform") is not None:
         if schedule["transform"] == "run":
             tags.append("transform")
         elif schedule["transform"] == "only":
@@ -101,3 +101,4 @@ for schedule in schedules:
     globals()[dag_id] = dag
 
     logger.info(f"DAG created for schedule '{schedule['name']}'")
+git
