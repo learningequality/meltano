@@ -27,6 +27,8 @@ DEFAULT_ARGS = {
     "concurrency": 1,
 }
 
+DEFAULT_TAGS = ["meltano"]
+
 project_root = os.getenv("MELTANO_PROJECT_ROOT", os.getcwd())
 
 meltano_bin = ".meltano/run/bin"
@@ -62,6 +64,17 @@ for schedule in schedules:
 
     dag_id = f"meltano_{schedule['name']}"
 
+    tags = DEFAULT_TAGS.copy()
+    if schedule["extractor"]:
+        tags.append(schedule["extractor"])
+    if schedule["loader"]:
+        tags.append(schedule["loader"])
+    if schedule["transform"]:
+        if schedule["transform"] == "run":
+            tags.append("transform")
+        elif schedule["transform"] == "only":
+            tags.append("transform-only")
+
     # from https://airflow.apache.org/docs/stable/scheduler.html#backfill-and-catchup
     #
     # It is crucial to set `catchup` to False so that Airflow only create a single job
@@ -71,6 +84,7 @@ for schedule in schedules:
     # purpose to enqueue date-chunked jobs for complete extraction window.
     dag = DAG(
         dag_id,
+        tags=tags,
         catchup=False,
         default_args=args,
         schedule_interval=schedule["interval"],
