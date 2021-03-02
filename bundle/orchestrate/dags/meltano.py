@@ -65,11 +65,11 @@ for schedule in schedules:
     dag_id = f"meltano_{schedule['name']}"
 
     tags = DEFAULT_TAGS.copy()
-    if schedule.get("extractor") is not None:
+    if schedule["extractor"]:
         tags.append(schedule["extractor"])
-    if schedule.get("loader") is not None:
+    if schedule["loader"]:
         tags.append(schedule["loader"])
-    if schedule.get("transform") is not None:
+    if schedule["transform"]:
         if schedule["transform"] == "run":
             tags.append("transform")
         elif schedule["transform"] == "only":
